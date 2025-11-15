@@ -39,7 +39,8 @@ pika==1.3.2
 # ------------------------------------------------------------------------------
 # APIs Externas
 # ------------------------------------------------------------------------------
-# httpx gerenciado automaticamente pelas dependências (openai, supabase)
+# httpx fixado em 0.28.1 para evitar erro "proxies" com langchain-openai
+httpx==0.28.1
 google-auth==2.29.0
 google-auth-oauthlib==1.2.0
 google-api-python-client==2.122.0
