@@ -357,31 +357,53 @@ class GoogleCalendarClient:
         self._authenticate()
 
     def _authenticate(self):
-        """Autentica usando OAuth 2.0."""
+        """
+        Autentica usando OAuth 2.0.
+
+        Comportamento em produção (sem navegador):
+        - Se já tem token salvo: carrega e usa (renova automaticamente se expirado)
+        - Se NÃO tem token: não crasha, apenas loga aviso
+        """
         # Carregar token se existir
         if Path(self.token_path).exists():
-            self.creds = Credentials.from_authorized_user_file(
-                self.token_path,
-                self.SCOPES
-            )
-
-        # Se não tem credenciais válidas, fazer login
-        if not self.creds or not self.creds.valid:
-            if self.creds and self.creds.expired and self.creds.refresh_token:
-                self.creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    self.credentials_path,
+            try:
+                self.creds = Credentials.from_authorized_user_file(
+                    self.token_path,
                     self.SCOPES
                 )
-                self.creds = flow.run_local_server(port=0)
 
-            # Salvar token
-            Path(self.token_path).write_text(self.creds.to_json())
+                # Se expirou, fazer refresh automaticamente
+                if self.creds.expired and self.creds.refresh_token:
+                    logger.info("Token do Google Calendar expirado, renovando...")
+                    self.creds.refresh(Request())
+                    # Salvar token atualizado
+                    Path(self.token_path).write_text(self.creds.to_json())
+                    logger.info("Token do Google Calendar renovado com sucesso")
 
-        # Criar serviço
-        self.service = build('calendar', 'v3', credentials=self.creds)
-        logger.info("Google Calendar autenticado com sucesso")
+                # Criar serviço
+                self.service = build('calendar', 'v3', credentials=self.creds)
+                logger.info("✅ Google Calendar autenticado com sucesso")
+                return
+
+            except Exception as e:
+                logger.error(f"Erro ao carregar token do Google Calendar: {e}")
+                # Continuar para tentar autenticar novamente
+
+        # Se chegou aqui, não tem token válido
+        # NÃO TENTAR AUTENTICAR (sem navegador em produção)
+        logger.warning(
+            "⚠️ Google Calendar não autenticado. "
+            "Acesse GET /oauth/google/authorize para obter URL de autorização."
+        )
+        self.service = None
+
+    def _check_service_available(self):
+        """Verifica se o serviço do Google Calendar está disponível."""
+        if self.service is None:
+            raise RuntimeError(
+                "Google Calendar não autenticado. "
+                "Acesse GET /oauth/google/authorize para autenticar."
+            )
 
     async def listar_horarios_disponiveis(
         self,
@@ -402,6 +424,8 @@ class GoogleCalendarClient:
         Returns:
             Lista de slots disponíveis: [{"inicio": datetime, "fim": datetime}]
         """
+        self._check_service_available()
+
         # Buscar eventos ocupados
         freebusy_query = {
             "timeMin": data_inicio.isoformat(),
@@ -493,6 +517,8 @@ class GoogleCalendarClient:
         Returns:
             Dados do evento criado (inclui link do Meet)
         """
+        self._check_service_available()
+
         event = {
             'summary': titulo,
             'description': descricao,
@@ -541,6 +567,8 @@ class GoogleCalendarClient:
         Returns:
             True se cancelado com sucesso
         """
+        self._check_service_available()
+
         try:
             self.service.events().delete(
                 calendarId=self.calendar_id,
@@ -571,6 +599,8 @@ class GoogleCalendarClient:
         Returns:
             Evento atualizado
         """
+        self._check_service_available()
+
         # Buscar evento existente
         event = self.service.events().get(
             calendarId=self.calendar_id,
@@ -613,6 +643,8 @@ class GoogleCalendarClient:
         Returns:
             Evento atualizado
         """
+        self._check_service_available()
+
         # Buscar evento
         event = self.service.events().get(
             calendarId=self.calendar_id,
@@ -643,6 +675,8 @@ class GoogleCalendarClient:
         Returns:
             Dados do evento ou None se não encontrado
         """
+        self._check_service_available()
+
         try:
             event = self.service.events().get(
                 calendarId=self.calendar_id,
@@ -670,6 +704,8 @@ class GoogleCalendarClient:
         Returns:
             Lista de eventos
         """
+        self._check_service_available()
+
         query_params = {
             'calendarId': self.calendar_id,
             'singleEvents': True,

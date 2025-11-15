@@ -18,6 +18,7 @@ Data: Janeiro 2025
 
 import asyncio
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 import redis.asyncio as redis
 import uvicorn
@@ -25,6 +26,8 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import JSONResponse, PlainTextResponse
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from loguru import logger
+from google_auth_oauthlib.flow import Flow
+from google.oauth2.credentials import Credentials
 
 from config.settings import settings
 from core.integrations import (
@@ -80,11 +83,16 @@ async def init_clients():
         verify_token=settings.WHATSAPP_WEBHOOK_VERIFY_TOKEN
     )
 
-    # Google Calendar
-    google_calendar_client = GoogleCalendarClient(
-        credentials_path=str(settings.GOOGLE_CREDENTIALS_PATH),
-        token_path=str(settings.GOOGLE_TOKEN_PATH)
-    )
+    # Google Calendar (opcional - não crasha se não autenticado)
+    try:
+        google_calendar_client = GoogleCalendarClient(
+            credentials_path=str(settings.GOOGLE_CREDENTIALS_PATH),
+            token_path=str(settings.GOOGLE_TOKEN_PATH)
+        )
+        logger.info("✅ Google Calendar inicializado")
+    except Exception as e:
+        logger.warning(f"⚠️ Google Calendar não disponível: {e}")
+        google_calendar_client = None
 
     # Supabase
     supabase_client = SupabaseClient(
@@ -284,6 +292,129 @@ async def whatsapp_webhook_receive(request: Request):
     except Exception as e:
         logger.error(f"Erro no webhook: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==============================================================================
+# OAUTH ENDPOINTS - GOOGLE CALENDAR
+# ==============================================================================
+
+@app.get("/oauth/google/authorize")
+async def google_oauth_authorize():
+    """
+    Gera URL de autorização do Google Calendar.
+
+    Fluxo:
+    1. Usuário acessa este endpoint
+    2. Recebe URL de autorização
+    3. Acessa a URL no navegador
+    4. Autoriza o aplicativo
+    5. É redirecionado para /oauth/google/callback
+    """
+    try:
+        # Criar Flow OAuth
+        flow = Flow.from_client_secrets_file(
+            str(settings.GOOGLE_CREDENTIALS_PATH),
+            scopes=[
+                'https://www.googleapis.com/auth/calendar',
+                'https://www.googleapis.com/auth/calendar.events'
+            ],
+            redirect_uri=settings.GOOGLE_REDIRECT_URI
+        )
+
+        # Gerar URL de autorização
+        authorization_url, state = flow.authorization_url(
+            access_type='offline',  # IMPORTANTE: Para obter refresh_token
+            include_granted_scopes='true',
+            prompt='consent'  # Força consentimento para garantir refresh_token
+        )
+
+        logger.info(f"URL de autorização gerada: {authorization_url}")
+
+        return {
+            "authorization_url": authorization_url,
+            "message": "Acesse esta URL no navegador para autorizar o aplicativo",
+            "instructions": [
+                "1. Copie a URL abaixo",
+                "2. Cole no seu navegador",
+                "3. Faça login com sua conta Google",
+                "4. Autorize o acesso ao Google Calendar",
+                "5. Aguarde o redirecionamento automático"
+            ]
+        }
+
+    except Exception as e:
+        logger.error(f"Erro ao gerar URL de autorização: {e}")
+        raise HTTPException(status_code=500, detail=f"Erro ao gerar URL: {str(e)}")
+
+
+@app.get("/oauth/google/callback")
+async def google_oauth_callback(code: str = None, error: str = None):
+    """
+    Callback do Google OAuth.
+
+    Recebe o código de autorização e troca por tokens.
+    Salva o refresh_token para uso futuro.
+    """
+    global google_calendar_client
+
+    # Verificar se houve erro
+    if error:
+        logger.error(f"Erro na autorização: {error}")
+        raise HTTPException(status_code=400, detail=f"Erro na autorização: {error}")
+
+    # Verificar se recebeu código
+    if not code:
+        raise HTTPException(status_code=400, detail="Código de autorização não fornecido")
+
+    try:
+        # Criar Flow OAuth
+        flow = Flow.from_client_secrets_file(
+            str(settings.GOOGLE_CREDENTIALS_PATH),
+            scopes=[
+                'https://www.googleapis.com/auth/calendar',
+                'https://www.googleapis.com/auth/calendar.events'
+            ],
+            redirect_uri=settings.GOOGLE_REDIRECT_URI
+        )
+
+        # Trocar código por tokens
+        flow.fetch_token(code=code)
+
+        # Obter credenciais
+        credentials = flow.credentials
+
+        # Salvar token
+        token_path = Path(settings.GOOGLE_TOKEN_PATH)
+        token_path.parent.mkdir(parents=True, exist_ok=True)
+        token_path.write_text(credentials.to_json())
+
+        logger.info(f"✅ Token do Google Calendar salvo em: {token_path}")
+
+        # Reinicializar GoogleCalendarClient
+        try:
+            from core.integrations import GoogleCalendarClient
+            google_calendar_client = GoogleCalendarClient(
+                credentials_path=str(settings.GOOGLE_CREDENTIALS_PATH),
+                token_path=str(settings.GOOGLE_TOKEN_PATH)
+            )
+            logger.info("✅ Google Calendar Client reinicializado com sucesso")
+        except Exception as e:
+            logger.error(f"Erro ao reinicializar Google Calendar Client: {e}")
+
+        return {
+            "status": "success",
+            "message": "Autenticação realizada com sucesso!",
+            "token_saved": str(token_path),
+            "instructions": [
+                "O Google Calendar está agora autenticado",
+                "O token será renovado automaticamente quando expirar",
+                "Você pode fechar esta página"
+            ]
+        }
+
+    except Exception as e:
+        logger.error(f"Erro no callback OAuth: {e}")
+        raise HTTPException(status_code=500, detail=f"Erro ao processar callback: {str(e)}")
 
 
 # ==============================================================================
