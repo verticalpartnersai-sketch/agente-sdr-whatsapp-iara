@@ -77,7 +77,7 @@ async def init_clients():
     whatsapp_client = WhatsAppClient(
         access_token=settings.WHATSAPP_ACCESS_TOKEN,
         phone_number_id=settings.WHATSAPP_PHONE_NUMBER_ID,
-        verify_token=settings.WHATSAPP_VERIFY_TOKEN
+        verify_token=settings.WHATSAPP_WEBHOOK_VERIFY_TOKEN
     )
 
     # Google Calendar
@@ -233,7 +233,7 @@ async def whatsapp_webhook_verify(request: Request):
     token = request.query_params.get("hub.verify_token")
     challenge = request.query_params.get("hub.challenge")
 
-    if mode == "subscribe" and token == settings.WHATSAPP_VERIFY_TOKEN:
+    if mode == "subscribe" and token == settings.WHATSAPP_WEBHOOK_VERIFY_TOKEN:
         logger.info("Webhook verificado com sucesso")
         return PlainTextResponse(challenge)
     else:

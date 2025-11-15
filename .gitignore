@@ -77,3 +77,7 @@ htmlcov/
 .mypy_cache/
 .dmypy.json
 dmypy.json
+.env.easypanel
+
+# Documentação local (não deploy no Easypanel)
+DOCS/

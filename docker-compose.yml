@@ -23,8 +23,11 @@ services:
       - WHATSAPP_WEBHOOK_SECRET=${WHATSAPP_WEBHOOK_SECRET}
 
       # Google Calendar
-      - GOOGLE_CREDENTIALS_FILE=${GOOGLE_CREDENTIALS_FILE:-config/google_credentials.json}
-      - GOOGLE_TOKEN_FILE=${GOOGLE_TOKEN_FILE:-config/google_token.json}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI:-http://localhost:8000/oauth/callback}
+      - GOOGLE_CREDENTIALS_PATH=${GOOGLE_CREDENTIALS_PATH:-config/google_credentials.json}
+      - GOOGLE_TOKEN_PATH=${GOOGLE_TOKEN_PATH:-config/google_token.json}
       - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID}
 
       # Supabase
@@ -53,6 +56,9 @@ services:
       - FOLLOWUP_CHECK_INTERVAL=${FOLLOWUP_CHECK_INTERVAL:-5}
       - ENVIRONMENT=${ENVIRONMENT:-production}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
+
+      # URLs
+      - VIDEO_BOAS_VINDAS_URL=${VIDEO_BOAS_VINDAS_URL}
 
     restart: unless-stopped
 

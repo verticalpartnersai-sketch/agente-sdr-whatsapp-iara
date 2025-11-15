@@ -37,8 +37,9 @@ class Settings(BaseSettings):
     # WhatsApp
     WHATSAPP_ACCESS_TOKEN: str
     WHATSAPP_PHONE_NUMBER_ID: str
-    WHATSAPP_VERIFY_TOKEN: str
+    WHATSAPP_WEBHOOK_VERIFY_TOKEN: str  # Corrigido: adicionado WEBHOOK no nome
     WHATSAPP_WEBHOOK_SECRET: str
+    WHATSAPP_BUSINESS_ACCOUNT_ID: Optional[str] = None
 
     # Google Calendar
     GOOGLE_CLIENT_ID: str
@@ -46,6 +47,7 @@ class Settings(BaseSettings):
     GOOGLE_REDIRECT_URI: str = "http://localhost:8000/oauth/callback"
     GOOGLE_CREDENTIALS_PATH: Path = Field(default=Path("config/google_credentials.json"))
     GOOGLE_TOKEN_PATH: Path = Field(default=Path("config/google_token.json"))
+    GOOGLE_CALENDAR_ID: Optional[str] = None
 
     # Supabase
     SUPABASE_URL: str
@@ -70,8 +72,16 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     MAX_CONCURRENT_MESSAGES: int = 10
 
+    # Configurações do Agente
+    COMPANY_NAME: str = "Vertical Partners"
+    PRODUCT_NAME: str = "Agentes de IA"
+    AGENT_NAME: str = "Iara"
+    MESSAGE_BUFFER_SECONDS: int = 30
+    MAX_FRAGMENT_WORDS: int = 30
+    FOLLOWUP_CHECK_INTERVAL: int = 5
+
     # URLs
-    VIDEO_BOAS_VINDAS_URL: str
+    VIDEO_BOAS_VINDAS_URL: Optional[str] = None  # Tornado opcional para não quebrar se não configurada
 
     # Servidor Web
     HOST: str = "0.0.0.0"
