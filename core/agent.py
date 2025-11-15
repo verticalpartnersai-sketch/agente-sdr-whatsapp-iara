@@ -20,7 +20,7 @@ from langchain.tools import BaseTool, StructuredTool
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.schema import HumanMessage, AIMessage, SystemMessage
-from pydantic import BaseModel, Field
+from pydantic.v1 import BaseModel, Field
 from loguru import logger
 
 from core.integrations import (

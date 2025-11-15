@@ -213,6 +213,17 @@ async def lifespan(app: FastAPI):
     """Gerencia lifecycle da aplicação."""
     # Startup
     await init_clients()
+
+    # Iniciar RabbitMQ consumer em thread separada
+    import threading
+
+    def start_consumer():
+        if rabbitmq_client:
+            rabbitmq_client.consume(message_consumer_callback)
+
+    consumer_thread = threading.Thread(target=start_consumer, daemon=True)
+    consumer_thread.start()
+
     yield
     # Shutdown
     await cleanup()
@@ -538,15 +549,6 @@ if __name__ == "__main__":
     )
 
     logger.info(f"🚀 Iniciando Agente SDR WhatsApp - Ambiente: {settings.ENVIRONMENT}")
-
-    # Iniciar RabbitMQ consumer em thread separada
-    import threading
-
-    def start_consumer():
-        rabbitmq_client.consume(message_consumer_callback)
-
-    consumer_thread = threading.Thread(target=start_consumer, daemon=True)
-    consumer_thread.start()
 
     # Iniciar FastAPI
     uvicorn.run(
