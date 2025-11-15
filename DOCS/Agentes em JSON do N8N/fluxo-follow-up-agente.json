@@ -1,0 +1,2180 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Aqui esta o histórico de mensagens entre o humano e o Agente AI: {{ $('Trata os Dados da Memória').item.json.historico }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=<instrucoes>\n\n- PROMPT: Marina Campelo - Módulo de Reengajamento\n- OBJETIVO: Gerar uma mensagem de follow-up que quebre o silêncio, recupere o controle da conversa e impulsione o lead para a próxima etapa.\n\n  <regras_gerais>\n\n- VOCÊ JÁ TEM TODAS AS INFORMAÇÕES DO LEAD, SIGA SEU FLUXO DE FOLLOW-UP CORRETAMENTE EM <logic_flow>: Telefone do Lead: {{ $json.telefone }} e Nome do lead: {{ $json.nome }}\n\n- **Verificação:** Se o nome do lead não for um nome de pessoa (ex: \"Advocacia Silva\", \"Jurídico\"), sua primeira ação é perguntar: *\"Perfeito. E com quem eu tenho o prazer de falar, por favor?\" Ou se o nome for “Daniela Back | Advocacia”, extraia o nome comum e refira-se ao lead pelo primeiro nome.*\n\n- **Restrição Inviolável:** Se um nome pessoal não for obtido, **NUNCA** se dirija ao lead pelo nome do escritório. Omita o nome e prossiga a conversa de forma impessoal.\n\n</regras_gerais>\n\n<diretrizes>\n\n  <objetivo>\n    Sua única função é gerar uma mensagem de follow-up cirúrgica e persuasiva, baseada no contexto fornecido, seguindo a persona e a metodologia abaixo.\n  </objetivo>\n\n</diretrizes>\n\n# SEÇÃO 1: IDENTIDADE E PERSONA\n\n<identidade>\n\n    <name>Marina Campelo</name>\n    <role>Estrategista de Eficiência Operacional | Vertical Lex</role>\n\n  <modus_operandi>\n    - **Tom de Voz:** Profissional, direto, mas não agressivo. A mensagem deve transmitir a ideia de que você está ocupada, mas pausou para dar uma última oportunidade ao lead. O tom é de \"estou seguindo em frente, esta é sua chance de vir junto\".\n    - **Filosofia de Follow-up:** Um follow-up não é uma cobrança, é um reenquadramento. Sua mensagem deve sutilmente lembrar o lead da dor que ele mesmo admitiu e do custo da inação.\n  </modus_operandi>\n\n</identidade>\n\n# SEÇÃO 2: DIRETIVA DA TAREFA\n\n<contexto>\n    <!-- Puxe o contexto da última interação com o lead através da sua memória. -->\n    Histórico \n  </contexto>\n\n  <fluxo_logico>\n    <!-- Siga este fluxo de raciocínio para construir a mensagem. -->\n    \n    1.  **Análise de Contexto:** Leia o histórico da conversa e identifique todo o contexto e histórico da conversa.\n    \n    2.  **Construção da Mensagem:** Crie uma mensagem que siga esta estrutura de 3 partes:\n        - **Abertura Suave (Ponte):** Comece com uma frase educada que retome a conversa.\n        - **Reenquadramento de Valor (O Gancho):** Conecte sutilmente o follow-up com a dor/objetivo do lead, lembrando-o do \"porquê\" ele iniciou a conversa.\n        - **Chamada para Ação (CTA de Baixo Atrito):** Termine com uma pergunta simples e aberta que seja fácil de responder e coloque a bola de volta no campo do lead.\n\n  </fluxo_logico>\n\n# SEÇÃO 3: REGRAS CRÍTICAS DE EXECUÇÃO\n\n<regras_criticas>\n  <rule id=\"no_emojis\">É estritamente proibido usar emojis na mensagem.</rule>\n  <rule id=\"clean_output\">Sua saída deve ser APENAS o texto da mensagem a ser enviada. Sem explicações ou comentários.</rule>\n- SEMPRE use o primeiro nome do lead.\n- SEMPRE adapte suas mensagens de acordo com o contexto e histórico da conversa com o lead.\n- VOCÊ é obrigada a SEMPRE gerar uma mensagem de follow-up de acordo com o contexto da conversa.\n- JAMAIS gere uma mensagem de follow-up como \"FOLLOW-UP\" ou algo do tipo, a sua mensagem deve ser genuina, única e direcionada de acordo com o contexto da conversa.\n</regras_criticas>\n\n</instrucoes>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1568,
+        1200
+      ],
+      "id": "49a18639-ebef-4333-883e-67d5c3fa6cfe",
+      "name": "Agente de Continuidade"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Telefone do lead: {{ $('dadosTradados1').item.json.telefone }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=<instrucoes>\n\n- PROMPT: Marina Campelo - Módulo de Reengajamento\n- OBJETIVO: Gerar uma mensagem de follow-up que quebre o silêncio, recupere o controle da conversa e impulsione o lead para a próxima etapa.\n\n  <regras_gerais>\n\n- VOCÊ JÁ TEM TODAS AS INFORMAÇÕES DO LEAD, SIGA SEU FLUXO DE FOLLOW-UP CORRETAMENTE EM <logic_flow>: Telefone do Lead: {{ $json.telefone }} e Nome do lead: {{ $json.nome }}\n\n- **Verificação:** Se o nome do lead não for um nome de pessoa (ex: \"Advocacia Silva\", \"Jurídico\"), sua primeira ação é perguntar: *\"Perfeito. E com quem eu tenho o prazer de falar, por favor?\" Ou se o nome for “Daniela Back | Advocacia”, extraia o nome comum e refira-se ao lead pelo primeiro nome.*\n\n- **Restrição Inviolável:** Se um nome pessoal não for obtido, **NUNCA** se dirija ao lead pelo nome do escritório. Omita o nome e prossiga a conversa de forma impessoal.\n\n</regras_gerais>\n\n<diretrizes>\n\n  <objetivo>\n    Sua única função é gerar uma mensagem de follow-up cirúrgica e persuasiva, baseada no contexto fornecido, seguindo a persona e a metodologia abaixo.\n  </objetivo>\n\n</diretrizes>\n\n# SEÇÃO 1: IDENTIDADE E PERSONA\n\n<identidade>\n\n    <name>Marina Campelo</name>\n    <role>Estrategista de Eficiência Operacional | Vertical Lex</role>\n\n  <modus_operandi>\n    - **Tom de Voz:** Profissional, direto, mas não agressivo. A mensagem deve transmitir a ideia de que você está ocupada, mas pausou para dar uma última oportunidade ao lead. O tom é de \"estou seguindo em frente, esta é sua chance de vir junto\".\n    - **Filosofia de Follow-up:** Um follow-up não é uma cobrança, é um reenquadramento. Sua mensagem deve sutilmente lembrar o lead da dor que ele mesmo admitiu e do custo da inação.\n  </modus_operandi>\n\n</identidade>\n\n# SEÇÃO 2: DIRETIVA DA TAREFA\n\n<contexto>\n    <!-- Puxe o contexto da última interação com o lead através da sua memória. -->\n    Histórico \n  </contexto>\n\n  <fluxo_logico>\n    <!-- Siga este fluxo de raciocínio para construir a mensagem. -->\n    \n    1.  **Análise de Contexto:** Leia o histórico da conversa e identifique todo o contexto e histórico da conversa.\n    \n    2.  **Construção da Mensagem:** Crie uma mensagem que siga esta estrutura de 3 partes:\n        - **Abertura Suave (Ponte):** Comece com uma frase educada que retome a conversa.\n        - **Reenquadramento de Valor (O Gancho):** Conecte sutilmente o follow-up com a dor/objetivo do lead, lembrando-o do \"porquê\" ele iniciou a conversa.\n        - **Chamada para Ação (CTA de Baixo Atrito):** Termine com uma pergunta simples e aberta que seja fácil de responder e coloque a bola de volta no campo do lead.\n\n  </fluxo_logico>\n\n# SEÇÃO 3: REGRAS CRÍTICAS DE EXECUÇÃO\n\n<regras_criticas>\n  <rule id=\"no_emojis\">É estritamente proibido usar emojis na mensagem.</rule>\n  <rule id=\"clean_output\">Sua saída deve ser APENAS o texto da mensagem a ser enviada. Sem explicações ou comentários.</rule>\n- SEMPRE use o primeiro nome do lead.\n- SEMPRE adapte suas mensagens de acordo com o contexto e histórico da conversa com o lead.\n- VOCÊ é obrigada a SEMPRE gerar uma mensagem de follow-up de acordo com o contexto da conversa.\n- JAMAIS gere uma mensagem de follow-up como \"FOLLOW-UP\" ou algo do tipo, a sua mensagem deve ser genuina, única e direcionada de acordo com o contexto da conversa.\n</regras_criticas>\n\n</instrucoes>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1568,
+        1392
+      ],
+      "id": "3950c07c-353a-4f81-9adc-c05d70fb5c71",
+      "name": "Agente de Encerramento"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Aqui esta o histórico de mensagens entre o humano e o Agente AI: {{ $('Trata os Dados da Memória').item.json.historico }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=<instrucoes>\n\n- PROMPT: Marina Campelo - Módulo de Reengajamento\n- OBJETIVO: Gerar uma mensagem de follow-up que quebre o silêncio, recupere o controle da conversa e impulsione o lead para a próxima etapa.\n\n  <regras_gerais>\n\n- VOCÊ JÁ TEM TODAS AS INFORMAÇÕES DO LEAD, SIGA SEU FLUXO DE FOLLOW-UP CORRETAMENTE EM <logic_flow>: Telefone do Lead: {{ $json.telefone }} e Nome do lead: {{ $json.nome }}\n\n- **Verificação:** Se o nome do lead não for um nome de pessoa (ex: \"Advocacia Silva\", \"Jurídico\"), sua primeira ação é perguntar: *\"Perfeito. E com quem eu tenho o prazer de falar, por favor?\" Ou se o nome for “Daniela Back | Advocacia”, extraia o nome comum e refira-se ao lead pelo primeiro nome.*\n\n- **Restrição Inviolável:** Se um nome pessoal não for obtido, **NUNCA** se dirija ao lead pelo nome do escritório. Omita o nome e prossiga a conversa de forma impessoal.\n\n</regras_gerais>\n\n<diretrizes>\n\n  <objetivo>\n    Sua única função é gerar uma mensagem de follow-up cirúrgica e persuasiva, baseada no contexto fornecido, seguindo a persona e a metodologia abaixo.\n  </objetivo>\n\n</diretrizes>\n\n# SEÇÃO 1: IDENTIDADE E PERSONA\n\n<identidade>\n\n    <name>Marina Campelo</name>\n    <role>Estrategista de Eficiência Operacional | Vertical Lex</role>\n\n  <modus_operandi>\n    - **Tom de Voz:** Profissional, direto, mas não agressivo. A mensagem deve transmitir a ideia de que você está ocupada, mas pausou para dar uma última oportunidade ao lead. O tom é de \"estou seguindo em frente, esta é sua chance de vir junto\".\n    - **Filosofia de Follow-up:** Um follow-up não é uma cobrança, é um reenquadramento. Sua mensagem deve sutilmente lembrar o lead da dor que ele mesmo admitiu e do custo da inação.\n  </modus_operandi>\n\n</identidade>\n\n# SEÇÃO 2: DIRETIVA DA TAREFA\n\n<contexto>\n    <!-- Puxe o contexto da última interação com o lead através da sua memória. -->\n    Histórico \n  </contexto>\n\n  <fluxo_logico>\n    <!-- Siga este fluxo de raciocínio para construir a mensagem. -->\n    \n    1.  **Análise de Contexto:** Leia o histórico da conversa e identifique todo o contexto e histórico da conversa.\n    \n    2.  **Construção da Mensagem:** Crie uma mensagem que siga esta estrutura de 3 partes:\n        - **Abertura Suave (Ponte):** Comece com uma frase educada que retome a conversa.\n        - **Reenquadramento de Valor (O Gancho):** Conecte sutilmente o follow-up com a dor/objetivo do lead, lembrando-o do \"porquê\" ele iniciou a conversa.\n        - **Chamada para Ação (CTA de Baixo Atrito):** Termine com uma pergunta simples e aberta que seja fácil de responder e coloque a bola de volta no campo do lead.\n\n  </fluxo_logico>\n\n# SEÇÃO 3: REGRAS CRÍTICAS DE EXECUÇÃO\n\n<regras_criticas>\n  <rule id=\"no_emojis\">É estritamente proibido usar emojis na mensagem.</rule>\n  <rule id=\"clean_output\">Sua saída deve ser APENAS o texto da mensagem a ser enviada. Sem explicações ou comentários.</rule>\n- SEMPRE use o primeiro nome do lead.\n- SEMPRE adapte suas mensagens de acordo com o contexto e histórico da conversa com o lead.\n- VOCÊ é obrigada a SEMPRE gerar uma mensagem de follow-up de acordo com o contexto da conversa.\n- JAMAIS gere uma mensagem de follow-up como \"FOLLOW-UP\" ou algo do tipo, a sua mensagem deve ser genuina, única e direcionada de acordo com o contexto da conversa.\n</regras_criticas>\n\n</instrucoes>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1568,
+        1008
+      ],
+      "id": "aed53797-fe5c-4b54-b98a-b56ed2fed207",
+      "name": "Agente de Retomada"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a9b87be8-b1ad-4257-b918-9b9d3050e90c",
+              "name": "id_user",
+              "value": "={{ $('dadosTradados1').item.json.telefone }}",
+              "type": "string"
+            },
+            {
+              "id": "99b70d17-d0f4-445f-9573-f2ab2c6bd547",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1088,
+        1200
+      ],
+      "id": "df8c7211-e2de-48ea-b8e9-746fb1c4881a",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('dadosTradados1').item.json.fup_enviado }}",
+                    "rightValue": 0,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    },
+                    "id": "3bae5280-032f-42aa-93a4-c41545fe5d7b"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e1c66763-debc-4f59-82fa-259c09a60f6b",
+                    "leftValue": "={{ $('dadosTradados1').item.json.fup_enviado }}",
+                    "rightValue": 1,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "404b2b0a-9aeb-4b66-9ed6-2d77348b894f",
+                    "leftValue": "={{ $('dadosTradados1').item.json.fup_enviado }}",
+                    "rightValue": 2,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6196b7c2-f7b5-47a3-9fc2-59ba2f3ddd19",
+                    "leftValue": "={{ $('dadosTradados1').item.json.fup_enviado }}",
+                    "rightValue": 3,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "e8dad4e7-d113-4d70-b521-db585bc88ad2",
+                    "leftValue": "={{ $('dadosTradados1').item.json.fup_enviado }}",
+                    "rightValue": 4,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "fde47765-c4ca-4866-b84b-fa3bd93eeb15",
+                    "leftValue": "={{ $('dadosTradados1').item.json.fup_enviado }}",
+                    "rightValue": 5,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "b395d1d0-fb9b-4d21-9f82-6cf00ba49715",
+                    "leftValue": "={{ $('dadosTradados1').item.json.fup_enviado }}",
+                    "rightValue": 6,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "41e005c1-356b-45a7-b6a8-37080b124b3e",
+                    "leftValue": "={{ $('dadosTradados1').item.json.fup_enviado }}",
+                    "rightValue": 7,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "41a1beea-8b1e-4a5e-a090-d4c593b7aedb",
+                    "leftValue": "={{ $('dadosTradados1').item.json.fup_enviado }}",
+                    "rightValue": 8,
+                    "operator": {
+                      "type": "number",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1808,
+        1088
+      ],
+      "id": "c6c21252-a262-4f3d-b3c4-d5bcb4e3df56",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Aqui esta o histórico de mensagens entre o humano e o Agente AI: {{ $json.historico }}",
+        "options": {
+          "systemMessage": "=Sua função é analisar o estado atual de uma conversa que VOCÊ está conduzindo com um lead e determinar a próxima ação estratégica com precisão cirúrgica.\n\nSua resposta final deve conter apenas uma destas classificações:\n- FOLLOW_UP – O lead ainda precisa de acompanhamento e/ou enxerga uma oportunidade em continuar a conversa com o lead.\n- BREAK – O lead não precisa de acompanhamento ou rejeitou de forma explicita o contato.\n\nCRITÉRIOS PARA FOLLOW_UP:\n\n1. LEADS COM INTERESSE EM PROSSEGUIR:\n- O lead está interagindo e deseja continuar a conversa\n- Lead demonstrou interesse, dados foram coletados, mas não houve seguimento\n- O lead está respondendo às perguntas.\n- Demonstrou interesse inicial e está fornecendo informações.\n- Fez perguntas sobre as soluções, empresa, etc.\n\n2. LEADS COM INTERESSE INCONCLUSIVO:\n- Sumiu durante a conversa.\n- Fez perguntas específicas mas não completou interesse\n- Respondeu que vai \"pensar\", \"analisar com o sócio\" e/ou \"verificar internamente\".\n- Pediu para \"retornar o contato em alguns dias/semanas ou depois\".\n- Mostrou interesse, mas mencionou uma restrição temporária (ex: \"estou ocupado agora\").\n- O lead parou de responder no meio de uma etapa do funil, mas não expressou desinteresse.\n\n3. LEADS DE VENDA PENDENTES:\n- Quer agendar uma reunião, mas processo não foi finalizado\n- Disse que ia retornar em outro horário, mas sumiu\n\n**Lembre-se:** Enxergue em alguns dos itens acima para continuarmos o follow-up.\n\nCRITÉRIOS PARA BREAK:\n\n1. PROCESSO CONCLUÍDO:\n- Você viu no histórico da conversa que a reunião já foi agendada.\n\n2. DESISTÊNCIA CLARA:\n- Rejeitou claramente (\"não tenho interesse mais\")\n- Pediu para sair da lista/não ser contatado\n- Decidiu não contratar nenhum serviço no momento\n\n3. CONTEXTO FORA DO ESCOPO:\n- Lead procurando emprego, oferecendo serviços (marketing, design, etc.), ou vendendo produtos.\n- O lead é claramente um chatbot ou um sistema automatizado.\n\nSINAIS DE ALERTA PARA BREAK:\n- \"Ofereço serviços de...\".\n- \"Preciso de emprego\".\n\nFormato da resposta:\nResponda APENAS com uma palavra:\nFOLLOW_UP\nou\nBREAK\n\nNão inclua JSON, aspas, comentários ou qualquer outro texto."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        -2464,
+        1232
+      ],
+      "id": "937943fd-853f-41ac-8c7b-eb771fc256a4",
+      "name": "Analista de conversas",
+      "executeOnce": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "6a0f604d-caa5-49e1-8c24-63be934f1284",
+              "leftValue": "={{ $json.output }}",
+              "rightValue": "FOLLOW_UP",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2080,
+        1216
+      ],
+      "id": "08cba7c8-7890-445a-aadf-806e096b12c5",
+      "name": "Follow Up?"
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "tags",
+              "value": "={{ $('Coleta Dados').item.json.id }}"
+            },
+            {
+              "name": "telefone",
+              "value": "={{ $('Coleta Dados').item.json.telefone }}"
+            },
+            {
+              "name": "ultimo_registro",
+              "value": "={{ $('Coleta Dados').item.json.ultimo_registro }}"
+            },
+            {
+              "name": "id",
+              "value": "={{ $('Coleta Dados').item.json.id }}"
+            }
+          ],
+          "number": [
+            {
+              "name": "fup_enviado",
+              "value": "={{ $('Coleta Dados').item.json.fup_enviado }}"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": false
+        }
+      },
+      "name": "dadosTradados1",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        -3056,
+        1232
+      ],
+      "id": "4edc0735-8ed6-4bbe-88b4-da79e09b780c"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "messages": {
+          "messageValues": [
+            {
+              "type": "ai",
+              "message": "={{ $json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryManager",
+      "typeVersion": 1.1,
+      "position": [
+        -720,
+        1200
+      ],
+      "id": "0e0d0d07-8ac2-4b17-ab1d-02fc1151b173",
+      "name": "Chat Memory Manager2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "9aced0ee-11e3-4750-b839-16e2419d1462",
+              "leftValue": "={{ $json.fup_enviado }}",
+              "rightValue": 9,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1360,
+        1456
+      ],
+      "id": "d0458308-9f85-4551-ae5a-876210fe69e9",
+      "name": "Último Follow-up?"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "leads_whatsapp",
+          "mode": "list",
+          "cachedResultName": "leads_whatsapp"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "fup_enviado": "=0",
+            "ultima_interacao_agente": "={{ null }}",
+            "remotejid": "={{ $('dadosTradados1').item.json.telefone }}",
+            "id": "={{ $('dadosTradados1').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "remotejid",
+              "displayName": "remotejid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "ultima_interacao_lead",
+              "displayName": "ultima_interacao_lead",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "ultima_interacao_agente",
+              "displayName": "ultima_interacao_agente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "agendar_conversa",
+              "displayName": "agendar_conversa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "fup_enviado",
+              "displayName": "fup_enviado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "tags",
+              "displayName": "tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1600,
+        1472
+      ],
+      "id": "e133ae02-6d11-4812-8176-1e07bc249d41",
+      "name": "Zerar Contagem de Follow-ups",
+      "credentials": {
+        "postgres": {
+          "id": "vYlOPiJi0sWQBU8O",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "leads_whatsapp",
+          "mode": "list",
+          "cachedResultName": "leads_whatsapp"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "fup_enviado": "={{ $('dadosTradados1').item.json.fup_enviado + 1 }}",
+            "remotejid": "={{ $('dadosTradados1').item.json.telefone }}",
+            "ultima_interacao_agente": "={{ $now }}",
+            "id": "={{ $('dadosTradados1').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "remotejid",
+              "displayName": "remotejid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "ultima_interacao_lead",
+              "displayName": "ultima_interacao_lead",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "ultima_interacao_agente",
+              "displayName": "ultima_interacao_agente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "agendar_conversa",
+              "displayName": "agendar_conversa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "fup_enviado",
+              "displayName": "fup_enviado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "tags",
+              "displayName": "tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1168,
+        1328
+      ],
+      "id": "cc66dc2f-84b6-460e-973b-e1c764fc8eda",
+      "name": "Atualizar Status Follow-up",
+      "credentials": {
+        "postgres": {
+          "id": "vYlOPiJi0sWQBU8O",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -3264,
+        1216
+      ],
+      "id": "f198d9da-8a38-4a6c-9184-3ff3c480a453",
+      "name": "Loop Over Items2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f7c2f8a8-411d-47a5-899d-0c6640611649",
+              "leftValue": "={{ $json._embedded.leads[0].status_id }}",
+              "rightValue": 91843239,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "ce6ec163-18dc-4f5e-a033-b46682fc502e",
+              "leftValue": "={{ $json._embedded.leads[0].status_id }}",
+              "rightValue": 91837220,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "867ee072-da92-4726-ad68-8e59c5edb334",
+              "leftValue": "={{ $json._embedded.leads[0].status_id }}",
+              "rightValue": 91837216,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "ba70875e-f637-4016-bbe4-ebc0e9df4f7a",
+              "leftValue": "={{ $json._embedded.leads[0].status_id }}",
+              "rightValue": 93320075,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3472,
+        1200
+      ],
+      "id": "c8b7fa2b-dc3d-487e-98d3-2e8ed6ad2125",
+      "name": "Está em Estágio Negativo?"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "leads_whatsapp",
+          "mode": "list",
+          "cachedResultName": "leads_whatsapp"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "tags": "={{ $json.output }}",
+            "remotejid": "={{ $('dadosTradados1').item.json.telefone }}",
+            "id": "={{ $('dadosTradados1').item.json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "remotejid",
+              "displayName": "remotejid",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            },
+            {
+              "id": "ultima_interacao_lead",
+              "displayName": "ultima_interacao_lead",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "ultima_interacao_agente",
+              "displayName": "ultima_interacao_agente",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "agendar_conversa",
+              "displayName": "agendar_conversa",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "fup_enviado",
+              "displayName": "fup_enviado",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false,
+              "removed": true
+            },
+            {
+              "id": "tags",
+              "displayName": "tags",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2080,
+        1472
+      ],
+      "id": "1c57eb18-5120-4411-bf5f-1a7978b21861",
+      "name": "Insere a TAG BREAK",
+      "credentials": {
+        "postgres": {
+          "id": "vYlOPiJi0sWQBU8O",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "leads",
+        "returnAll": true,
+        "filter": {
+          "query": "={{ $json.remotejid?.replace('@s.whatsapp.net', '') ?? '' }}",
+          "statuses": [
+            91843239,
+            91837220,
+            93320075,
+            91837216
+          ]
+        },
+        "options": {},
+        "limit": 5000
+      },
+      "type": "n8n-nodes-kommo.kommo",
+      "typeVersion": 1,
+      "position": [
+        -3680,
+        1200
+      ],
+      "id": "7eeee466-c671-4b9d-8599-5764f9d075f7",
+      "name": "Puxa Lead Kommo",
+      "credentials": {
+        "kommoOAuth2Api": {
+          "id": "9MaenA8owFCWmiZR",
+          "name": "Kommo CRM Long-Lived Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('dadosTradados1').item.json.telefone }}",
+        "tableName": "memoria_whatsapp",
+        "contextWindowLength": 100
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        -720,
+        1600
+      ],
+      "id": "9856fd11-42b9-45b9-aa5a-d77bda8c193d",
+      "name": "Memory2",
+      "credentials": {
+        "postgres": {
+          "id": "fYsm1GQnQOGjCWKV",
+          "name": "Postgres V-Lex"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Etapa 1 → enviar FU0 após 30 minutos do último registro\nSELECT\n  l.*\nFROM\n  public.leads_whatsapp AS l\nWHERE\n  l.tags = 'IA' AND l.fup_enviado = 0 AND l.ultima_interacao_agente <= NOW() - INTERVAL '30 minutes'\nORDER BY\n  l.ultima_interacao_agente ASC;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -4144,
+        880
+      ],
+      "id": "92389ccf-838d-4ba3-aa3b-c11fba3ca689",
+      "name": "Inativos 30 minutos",
+      "credentials": {
+        "postgres": {
+          "id": "vYlOPiJi0sWQBU8O",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## GATILHOS",
+        "height": 944,
+        "width": 224,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -4448,
+        784
+      ],
+      "typeVersion": 1,
+      "id": "70a3f945-d1be-45be-b56c-7c3b206accfa",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## CONSULTA NO KOMMOCRM",
+        "height": 304,
+        "width": 400,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3728,
+        1104
+      ],
+      "typeVersion": 1,
+      "id": "e3364741-befa-4c19-a9d1-42588c148f02",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## INTERVALOS",
+        "height": 992,
+        "width": 224,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -4208,
+        768
+      ],
+      "typeVersion": 1,
+      "id": "c74be311-dc74-4693-bc30-0c99a1cfc913",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## GERA ANALISE DA CONVERSA",
+        "height": 544,
+        "width": 1424,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3312,
+        1104
+      ],
+      "typeVersion": 1,
+      "id": "d68adc4f-d7f0-455c-835e-1f773a4a6237",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## GERA MENSAGEM PERSONALIZADA",
+        "height": 720,
+        "width": 656,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1872,
+        928
+      ],
+      "typeVersion": 1,
+      "id": "45de62f0-7935-4ee1-85e3-49f7a8960db9",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## TRATA DADOS",
+        "height": 288,
+        "width": 256,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1168,
+        1104
+      ],
+      "typeVersion": 1,
+      "id": "e79821fd-f25d-4dd7-b9e7-1dc82dc7098c",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## ATUALIZA NA MEMÓRIA",
+        "height": 288,
+        "width": 592,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -880,
+        1104
+      ],
+      "typeVersion": 1,
+      "id": "1246e863-bd79-481a-bba0-e7eeaec08b7a",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "=0 0 8-22 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "60a4a9eb-3818-4548-9ac3-a2c920aaf32f",
+      "name": "Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -4384,
+        1040
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "=0 0 9-22 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "8d08a130-efc5-4528-86cb-ec06768c0d56",
+      "name": "Trigger1",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -4384,
+        1200
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "=0 0 9-22 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "d6d2be37-7d0c-453f-ac1a-f7ed3eb85f55",
+      "name": "Trigger2",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -4384,
+        1376
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "=0 0 9-22 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "11c02738-a06f-41e7-925e-ec7ed83f037f",
+      "name": "Trigger3",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -4384,
+        1552
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "content": "## ENVIA MENSAGEM",
+        "height": 432,
+        "width": 1328,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        1216
+      ],
+      "typeVersion": 1,
+      "id": "397f7b99-6f7f-456c-a65c-522d51407490",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "=0 * * * * *"
+            }
+          ]
+        }
+      },
+      "id": "1c2de103-9dbe-4e97-90ae-5bcf45672cc2",
+      "name": "Trigger4",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -4384,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "tags",
+              "value": "={{ $json.tags }}"
+            },
+            {
+              "name": "telefone",
+              "value": "={{ $json.remotejid }}"
+            },
+            {
+              "name": "ultimo_registro",
+              "value": "={{ $json.ultima_interacao_lead }}"
+            },
+            {
+              "name": "id",
+              "value": "={{ $json.id }}"
+            }
+          ],
+          "number": [
+            {
+              "name": "fup_enviado",
+              "value": "={{ $json.fup_enviado }}"
+            }
+          ]
+        },
+        "options": {
+          "dotNotation": false
+        }
+      },
+      "name": "Coleta Dados",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        -3888,
+        1200
+      ],
+      "id": "2cef10ee-e755-438e-bdbb-bf84e14ca115"
+    },
+    {
+      "parameters": {
+        "content": "## TRATA DADOS",
+        "height": 304,
+        "width": 192,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -3936,
+        1104
+      ],
+      "typeVersion": 1,
+      "id": "5d7ea7e3-f36d-4040-9087-cb4017d6c67c",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evo-api-evolution-api.zqco7k.easypanel.host/message/sendText/AGENTIC SDR - Iara da Vertical Partners 💛",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "EAAQj7VGGgUYBP8N2zw1NsNCZCIriC0ZCs60pxzHmsbPX2MZBwoht8rmGZCyl6yh3sqZBJza7gJWjXuWLISAIuDjDbOSLt0L95c0TaMveZAoWAY9Ck7WQiaK3ooqspcyedLhd0z8Ak9JmP7YlBDa0teXMfsd2ZBSzCkcURFSeZBLiJYL9xmhs4znXYZB2ddHVBxgZDZD"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "=json",
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "jsonBody": "={\n    \"number\": \"{{ $('Set Out6').item.json.telefone }}\",\n    \"text\": \"{{ $('Set Out6').item.json.output }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        1344
+      ],
+      "id": "bb08eb77-74d0-4376-9b83-6ef66851ad52",
+      "name": "Envia Texto7",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evo-api-evolution-api.zqco7k.easypanel.host/chat/sendPresence/AGENTIC SDR - Iara da Vertical Partners 💛",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "EAAQj7VGGgUYBP8N2zw1NsNCZCIriC0ZCs60pxzHmsbPX2MZBwoht8rmGZCyl6yh3sqZBJza7gJWjXuWLISAIuDjDbOSLt0L95c0TaMveZAoWAY9Ck7WQiaK3ooqspcyedLhd0z8Ak9JmP7YlBDa0teXMfsd2ZBSzCkcURFSeZBLiJYL9xmhs4znXYZB2ddHVBxgZDZD"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"number\": \"{{ $json.telefone }}\",\n    \"delay\": {{ $json.char_count }},\n    \"presence\": \"composing\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        1344
+      ],
+      "id": "e9cc330d-55b2-4330-8159-eb346fd2e3b2",
+      "name": "Envia \"Digitando...\"6",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "04898736-d183-49ec-a7c1-49e72a7d2aa8",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "e0de175f-db13-4003-8f25-8c9190918d8f",
+              "name": "telefone",
+              "value": "={{ $json.remoteJid }}",
+              "type": "string"
+            },
+            {
+              "id": "7bfbb285-5ba2-4f3c-88e0-1a42ffc7f595",
+              "name": "char_count",
+              "value": "={{ $json.char_count }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        464,
+        1344
+      ],
+      "id": "a1087e56-82a0-4baf-b13e-269d89113ff6",
+      "name": "Set Out6"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import random\nimport re\n\ndef convert_headers_to_bold(text):\n    text = re.sub(r'#{1,3}\\s+([^:\\n]+):', r'*\\1*:', text)\n    text = re.sub(r'#{1,3}\\s+([^:\\n]+)', r'*\\1*', text)\n    text = re.sub(r'\\*\\*([^*]+)\\*\\*', r'*\\1*', text)\n    return text\n\ndef splitTextIntoSentences(text, join_probability=0.3):\n    text = convert_headers_to_bold(text)\n    text = text.replace('\\r\\n', '\\n').replace('\\r', '\\n').strip()\n\n    # --- INÍCIO DA CORREÇÃO LÓGICA ---\n    # Se o texto começa com um padrão de enumeração (ex: \"1. \"), trata-o como um bloco único.\n    if re.search(r'^\\d+\\.\\s', text, flags=re.MULTILINE):\n        # Retorna o texto inteiro como o único item de uma lista, garantindo que não seja quebrado.\n        return [text.replace('\\n', '\\\\n')]\n    # --- FIM DA CORREÇÃO LÓGICA ---\n\n    url_pattern = r'https?://[^\\s]+'\n    url_matches = list(re.finditer(url_pattern, text))\n    url_replacements = {}\n    for i, match in enumerate(url_matches):\n        url = match.group()\n        placeholder = f'URL_PLACEHOLDER_{i}'\n        url_replacements[placeholder] = url\n        text = text.replace(url, placeholder)\n\n    replacements = {\n        'Dr.': 'Dr_DOT_', 'P.': 'P_DOT_', 'www.': 'www_DOT_', '.com': '_DOT_com',\n        '.org': '_DOT_org', '.net': '_DOT_net', '.br': '_DOT_br', '.gov': '_DOT_gov'\n    }\n    for old, new in replacements.items():\n        text = text.replace(old, new)\n\n    # Mantendo a regex original para garantir compatibilidade\n    split_pattern = re.compile(r'(?<=[.!?])\\s+(?=[\\\"\\'\\']?[A-ZÀ-ÖØ-Þ])', flags=re.UNICODE)\n    sentences = split_pattern.split(text)\n    sentences = [s.strip() for s in sentences if s.strip()]\n\n    def starts_with_enumeration(s):\n        return re.match(r'^\\d+\\.', s) is not None\n\n    def starts_with_emoji(s):\n        try:\n            # Mantendo a regex original para garantir compatibilidade\n            emoji_regex = re.compile(r'^[\\U0001F300-\\U0001F6FF]')\n            return emoji_regex.match(s) is not None\n        except:\n            return False\n\n    merged_sentences = []\n    for s in sentences:\n        if merged_sentences and (starts_with_enumeration(s) or starts_with_emoji(s)):\n            merged_sentences[-1] += ' ' + s\n        else:\n            merged_sentences.append(s)\n    sentences = merged_sentences\n    \n    new_to_old = {v: k for k, v in replacements.items()}\n    for i in range(len(sentences)):\n        for new, old in new_to_old.items():\n            sentences[i] = sentences[i].replace(new, old)\n            \n    for placeholder, url in url_replacements.items():\n        sentences = [s.replace(placeholder, url) for s in sentences]\n\n    result = []\n    i = 0\n    while i < len(sentences):\n        remaining = len(sentences) - i\n        if remaining > 1 and random.random() < join_probability:\n            max_join = min(3, remaining)\n            num_to_join = random.randint(2, max_join)\n            joined = ' '.join(sentences[i:i+num_to_join])\n            result.append(joined)\n            i += num_to_join\n        else:\n            result.append(sentences[i])\n            i += 1\n            \n    return [r.replace('\\n', '\\\\n') for r in result]\n\n# --- CÓDIGO PRINCIPAL ---\nJOIN_PROBABILITY = 0.60\nnewItems = []\n\ntry:\n    for item in items:\n        if 'json' not in item or 'output' not in item['json'] or 'remoteJid' not in item['json']:\n            continue\n            \n        output = item['json']['output']\n        remoteJid = item['json']['remoteJid']\n        \n        sentences = splitTextIntoSentences(output, JOIN_PROBABILITY)\n        \n        for sentence in sentences:\n            charCount = min(len(sentence) * 100, 4000)\n            newItems.append({\n                'json': {\n                    'output': sentence,\n                    'remoteJid': remoteJid,\n                    'char_count': charCount\n                }\n            })\nexcept Exception as e:\n    import traceback\n    error_msg = f\"Erro ao processar texto: {str(e)}\\n{traceback.format_exc()}\"\n    \n    try:\n        for item in items:\n            if 'json' in item and 'output' in item['json']:\n                output = item['json']['output']\n                remoteJid = item['json'].get('remoteJid', '')\n                output = convert_headers_to_bold(output)\n                newItems.append({\n                    'json': {\n                        'output': output,\n                        'remoteJid': remoteJid,\n                        'char_count': min(len(output) * 100, 4000)\n                    }\n                })\n    except:\n        for item in items:\n            if 'json' in item and 'output' in item['json']:\n                output = item['json']['output']\n                output = re.sub(r'#{1,3}\\s+', '', output)\n                output = re.sub(r'\\*\\*([^*]+)\\*\\*', r'*\\1*', output)\n                newItems.append({\n                    'json': {\n                        'output': output,\n                        'remoteJid': item['json'].get('remoteJid', ''),\n                        'char_count': min(len(output) * 100, 4000)\n                    }\n                })\n\nif not newItems:\n    first_item_json = items[0].get('json', {})\n    remote_jid_fallback = first_item_json.get('remoteJid', '')\n    \n    newItems.append({\n        'json': {\n            'output': 'Não foi possível processar a mensagem.',\n            'remoteJid': remote_jid_fallback,\n            'char_count': 4000\n        }\n    })\n\nreturn newItems"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        1328
+      ],
+      "id": "f81a753d-d072-4384-b550-6a36e59d62e7",
+      "name": "Concatena mensagens6"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        208,
+        1328
+      ],
+      "id": "701d26e3-3745-44f2-ad8c-065fd4bee6a7",
+      "name": "Loop Over Items9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "21857a84-7062-481b-93e5-489bb7a51b4e",
+              "name": "output",
+              "value": "={{ $('Edit Fields').item.json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "5bb2142c-11d1-4f6d-930b-667c0901a044",
+              "name": "remoteJid",
+              "value": "={{ $('Edit Fields').item.json.id_user }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -192,
+        1328
+      ],
+      "id": "8547bc00-6888-40ef-b8f4-6f5a03bdcdee",
+      "name": "Set Out 6"
+    },
+    {
+      "parameters": {
+        "content": "## ATUALIZA TABELA \"leads\"",
+        "height": 432,
+        "width": 640,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1104,
+        1216
+      ],
+      "typeVersion": 1,
+      "id": "9796ec7e-9e52-48b2-92af-cbfc8fb4810e",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  json_agg(\n    json_build_object(\n      'tipo', message ->> 'type',\n      'conteudo', message ->> 'content'\n    )\n  ) AS memoria_whatsapp\nFROM\n  memoria_whatsapp\nWHERE\n  session_id = '{{ $json.telefone }}';",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -2864,
+        1232
+      ],
+      "id": "9f8d7d69-e9ce-443e-832d-074e31427da0",
+      "name": "Puxa Memória",
+      "credentials": {
+        "postgres": {
+          "id": "vYlOPiJi0sWQBU8O",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -2320,
+        1600
+      ],
+      "id": "0c4272a3-7815-471e-bec2-16dfb3f12b64",
+      "name": "2.0-flash-lite",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "2gj6KKKKqR8fHBQO",
+          "name": "Google Gemini V-Lex"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -2464,
+        1600
+      ],
+      "id": "54f1485a-a99f-4b58-8ed3-05e9be14c970",
+      "name": "4o-mini",
+      "credentials": {
+        "openAiApi": {
+          "id": "M0dZQLv9yb9yB6wX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -1568,
+        1616
+      ],
+      "id": "ba41b1d6-bc20-4319-8f58-7043d2d8d2b5",
+      "name": "4o-mini1",
+      "credentials": {
+        "openAiApi": {
+          "id": "M0dZQLv9yb9yB6wX",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "-- Etapa 1 → enviar FU0 após 2 horas do último registro\nSELECT\n  l.*\nFROM\n  public.leads_whatsapp AS l\nWHERE\n  l.tags = 'IA' AND l.fup_enviado = 1 AND l.ultima_interacao_agente <= NOW() - INTERVAL '2 hours'\nORDER BY\n  l.ultima_interacao_agente ASC;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -4144,
+        1040
+      ],
+      "id": "82f7111b-f41d-4a75-9a0d-ef4e7600c465",
+      "name": "Inativos 2 horas ou mais",
+      "credentials": {
+        "postgres": {
+          "id": "vYlOPiJi0sWQBU8O",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  l.*\nFROM\n  public.leads_whatsapp AS l\nWHERE\n  l.tags = 'IA' AND l.fup_enviado = 2 AND l.ultima_interacao_agente <= NOW() - INTERVAL '4 hours'\nORDER BY\n  l.ultima_interacao_agente ASC;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -4144,
+        1200
+      ],
+      "id": "f9395ac0-26db-463a-95db-d52b382c5960",
+      "name": "Inativos 4 horas ou mais",
+      "credentials": {
+        "postgres": {
+          "id": "vYlOPiJi0sWQBU8O",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  l.*\nFROM\n  public.leads_whatsapp AS l\nWHERE\n  l.tags = 'teste' AND l.fup_enviado = 3 AND l.ultima_interacao_agente <= NOW() - INTERVAL '8 hours'\nORDER BY\n  l.ultima_interacao_agente ASC;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -4144,
+        1376
+      ],
+      "id": "9af2041c-d8e6-4123-8987-d6aa582e9a9b",
+      "name": "Inativos 8 horas ou mais",
+      "credentials": {
+        "postgres": {
+          "id": "vYlOPiJi0sWQBU8O",
+          "name": "Postgres account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  l.*\nFROM\n  public.leads_whatsapp AS l\nWHERE\n  l.tags = 'teste' AND l.fup_enviado = 4 AND l.ultima_interacao_agente <= NOW() - INTERVAL '12 hours'\nORDER BY\n  l.ultima_interacao_agente ASC;",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -4144,
+        1552
+      ],
+      "id": "597f11ef-312e-485c-b4e8-8789ba88db77",
+      "name": "Inativos 12 horas ou mais",
+      "credentials": {
+        "postgres": {
+          "id": "vYlOPiJi0sWQBU8O",
+          "name": "Postgres account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "# A variável 'items' é fornecida automaticamente pelo n8n com os dados de entrada.\n# Acessamos o primeiro item da lista de entrada (índice 0)\n# e depois o campo 'json' para obter os dados.\nhistorico_mensagens = items[0].json['memoria_whatsapp']\n\nconversa_formatada = []\n\n# O resto da lógica permanece a mesma\nfor mensagem in historico_mensagens:\n    tipo = mensagem.get('tipo', 'Desconhecido')\n    conteudo = mensagem.get('conteudo', '')\n\n    if tipo == 'human':\n        conversa_formatada.append(f\"Humano: {conteudo}\")\n    elif tipo == 'ai':\n        conversa_formatada.append(f\"IA: {conteudo}\")\n\nhistorico_final = \"\\n\".join(conversa_formatada)\n\n# Retorna os dados no formato que o n8n espera (uma lista de objetos)\n# O próximo nó poderá acessar esse dado com a expressão {{$json.historico}}\nreturn [{'historico': historico_final}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2672,
+        1232
+      ],
+      "id": "526a58d9-6efc-4c17-b5d7-9fed6684d269",
+      "name": "Trata os Dados da Memória"
+    }
+  ],
+  "connections": {
+    "Agente de Continuidade": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de Encerramento": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Agente de Retomada": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Chat Memory Manager2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Agente de Retomada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agente de Retomada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agente de Retomada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agente de Continuidade",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agente de Continuidade",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agente de Continuidade",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agente de Encerramento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agente de Encerramento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Agente de Encerramento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analista de conversas": {
+      "main": [
+        [
+          {
+            "node": "Follow Up?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Follow Up?": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Insere a TAG BREAK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "dadosTradados1": {
+      "main": [
+        [
+          {
+            "node": "Puxa Memória",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Memory Manager2": {
+      "main": [
+        [
+          {
+            "node": "Set Out 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Último Follow-up?": {
+      "main": [
+        [
+          {
+            "node": "Zerar Contagem de Follow-ups",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zerar Contagem de Follow-ups": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar Status Follow-up": {
+      "main": [
+        [
+          {
+            "node": "Último Follow-up?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items2": {
+      "main": [
+        [],
+        [
+          {
+            "node": "dadosTradados1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Está em Estágio Negativo?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Loop Over Items2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insere a TAG BREAK": {
+      "main": [
+        []
+      ]
+    },
+    "Puxa Lead Kommo": {
+      "main": [
+        [
+          {
+            "node": "Está em Estágio Negativo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory2": {
+      "ai_memory": [
+        [
+          {
+            "node": "Chat Memory Manager2",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inativos 30 minutos": {
+      "main": [
+        [
+          {
+            "node": "Coleta Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger": {
+      "main": [
+        [
+          {
+            "node": "Inativos 2 horas ou mais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Inativos 4 horas ou mais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger2": {
+      "main": [
+        [
+          {
+            "node": "Inativos 8 horas ou mais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger3": {
+      "main": [
+        [
+          {
+            "node": "Inativos 12 horas ou mais",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger4": {
+      "main": [
+        [
+          {
+            "node": "Inativos 30 minutos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Coleta Dados": {
+      "main": [
+        [
+          {
+            "node": "Puxa Lead Kommo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia Texto7": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items9",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Atualizar Status Follow-up",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envia \"Digitando...\"6": {
+      "main": [
+        [
+          {
+            "node": "Envia Texto7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Out6": {
+      "main": [
+        [
+          {
+            "node": "Envia \"Digitando...\"6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Concatena mensagens6": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items9": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Set Out6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Out 6": {
+      "main": [
+        [
+          {
+            "node": "Concatena mensagens6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Puxa Memória": {
+      "main": [
+        [
+          {
+            "node": "Trata os Dados da Memória",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4o-mini": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Analista de conversas",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4o-mini1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Agente de Retomada",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agente de Continuidade",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Agente de Encerramento",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inativos 2 horas ou mais": {
+      "main": [
+        [
+          {
+            "node": "Coleta Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inativos 4 horas ou mais": {
+      "main": [
+        [
+          {
+            "node": "Coleta Dados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inativos 8 horas ou mais": {
+      "main": [
+        []
+      ]
+    },
+    "Inativos 12 horas ou mais": {
+      "main": [
+        []
+      ]
+    },
+    "Trata os Dados da Memória": {
+      "main": [
+        [
+          {
+            "node": "Analista de conversas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e5c63fe3592bab7747e8533b77f0419c990e995c1382e78831dcb57a6d7a4348"
+  }
+}

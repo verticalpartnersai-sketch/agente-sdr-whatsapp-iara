@@ -1,0 +1,1 @@
+- "Todos os docs sempre insira na pasta DOCS"
