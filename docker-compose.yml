@@ -31,31 +31,30 @@ services:
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_KEY=${SUPABASE_KEY}
 
-      # Redis
-      - REDIS_HOST=${REDIS_HOST:-redis}
+      # Redis (externo - N8N)
+      - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT:-6379}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_DB=${REDIS_DB:-0}
 
-      # RabbitMQ
-      - RABBITMQ_HOST=${RABBITMQ_HOST:-rabbitmq}
+      # RabbitMQ (externo - N8N)
+      - RABBITMQ_HOST=${RABBITMQ_HOST}
       - RABBITMQ_PORT=${RABBITMQ_PORT:-5672}
-      - RABBITMQ_USER=${RABBITMQ_USER:-admin}
+      - RABBITMQ_USER=${RABBITMQ_USER}
       - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
       - RABBITMQ_QUEUE_NAME=${RABBITMQ_QUEUE_NAME:-whatsapp_messages}
 
       # Configurações do Agente
       - COMPANY_NAME=${COMPANY_NAME:-Vertical Partners}
       - PRODUCT_NAME=${PRODUCT_NAME:-Agentes de IA}
-      - AGENT_NAME=${AGENT_NAME:-Isabella}
+      - AGENT_NAME=${AGENT_NAME:-Iara}
       - MESSAGE_BUFFER_SECONDS=${MESSAGE_BUFFER_SECONDS:-30}
       - MAX_FRAGMENT_WORDS=${MAX_FRAGMENT_WORDS:-30}
       - FOLLOWUP_CHECK_INTERVAL=${FOLLOWUP_CHECK_INTERVAL:-5}
+      - ENVIRONMENT=${ENVIRONMENT:-production}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
 
     restart: unless-stopped
-    depends_on:
-      - redis
-      - rabbitmq
 
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
@@ -63,40 +62,3 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    command: redis-server --requirepass ${REDIS_PASSWORD}
-    volumes:
-      - redis_data:/data
-    restart: unless-stopped
-
-    healthcheck:
-      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER:-admin}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
-    restart: unless-stopped
-
-    healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-volumes:
-  redis_data:
-  rabbitmq_data:
