@@ -7,10 +7,6 @@ Integrações com APIs externas:
 - Supabase
 - ElevenLabs
 - RabbitMQ
-
-Autor: Claude Code
-Versão: 1.0
-Data: Janeiro 2025
 """
 
 import asyncio

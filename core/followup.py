@@ -11,10 +11,6 @@ Timeline:
 
 Horário: 07h-21h
 Janela: 72 horas totais
-
-Autor: Claude Code
-Versão: 1.0
-Data: Janeiro 2025
 """
 
 import asyncio

@@ -6,10 +6,6 @@ Sistema de memória, buffer e RAG híbrido:
 - MessageBuffer: Agrupamento de mensagens (30s)
 - HybridRetriever: RAG 60% semântico + 40% BM25
 - KnowledgeManager: Gerenciamento da base de conhecimento
-
-Autor: Claude Code
-Versão: 1.0
-Data: Janeiro 2025
 """
 
 import asyncio
