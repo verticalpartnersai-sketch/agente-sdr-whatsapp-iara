@@ -299,6 +299,44 @@ class GoogleCalendarClient:
         'https://www.googleapis.com/auth/calendar.events'
     ]
 
+    def _create_credentials_file(self, credentials_path: str):
+        """
+        Cria o arquivo google_credentials.json a partir das variáveis de ambiente
+        se o arquivo não existir.
+
+        Args:
+            credentials_path: Caminho onde o arquivo será criado
+        """
+        from config.settings import settings
+
+        credentials_file = Path(credentials_path)
+
+        # Se o arquivo já existe, não fazer nada
+        if credentials_file.exists():
+            logger.info(f"Arquivo de credenciais já existe: {credentials_path}")
+            return
+
+        logger.info(f"Criando arquivo de credenciais a partir das variáveis de ambiente: {credentials_path}")
+
+        # Criar estrutura do arquivo credentials.json
+        credentials_data = {
+            "installed": {
+                "client_id": settings.GOOGLE_CLIENT_ID,
+                "client_secret": settings.GOOGLE_CLIENT_SECRET,
+                "redirect_uris": [settings.GOOGLE_REDIRECT_URI],
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs"
+            }
+        }
+
+        # Criar diretório se não existir
+        credentials_file.parent.mkdir(parents=True, exist_ok=True)
+
+        # Salvar arquivo
+        credentials_file.write_text(json.dumps(credentials_data, indent=2))
+        logger.info(f"Arquivo de credenciais criado com sucesso: {credentials_path}")
+
     def __init__(self, credentials_path: str, token_path: str = "token.json"):
         """
         Inicializa cliente do Google Calendar.
@@ -312,6 +350,9 @@ class GoogleCalendarClient:
         self.creds = None
         self.service = None
         self.calendar_id = 'primary'
+
+        # Criar arquivo de credenciais se não existir
+        self._create_credentials_file(credentials_path)
 
         self._authenticate()
 
