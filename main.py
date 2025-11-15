@@ -196,7 +196,10 @@ async def cleanup():
         await elevenlabs_client.close()
 
     if rabbitmq_client:
-        rabbitmq_client.close()
+        try:
+            rabbitmq_client.close()
+        except Exception as e:
+            logger.warning(f"Erro ao fechar RabbitMQ (ignorado): {e}")
 
     if redis_client:
         await redis_client.close()
