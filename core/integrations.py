@@ -1044,10 +1044,13 @@ class RabbitMQClient:
         self.connection = pika.BlockingConnection(parameters)
         self.channel = self.connection.channel()
 
-        # Declarar fila (idempotente)
+        # Declarar fila como Quorum (alta confiabilidade)
         self.channel.queue_declare(
             queue=self.queue_name,
-            durable=True  # Sobrevive a reinicialização
+            durable=True,  # Sobrevive a reinicialização
+            arguments={
+                'x-queue-type': 'quorum'  # Tipo Quorum: replicação e alta disponibilidade
+            }
         )
 
         logger.info(f"RabbitMQ conectado na fila '{self.queue_name}'")
