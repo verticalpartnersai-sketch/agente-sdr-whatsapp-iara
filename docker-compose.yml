@@ -1,8 +1,8 @@
 services:
   agente-sdr:
     build: .
-    ports:
-      - "8000:8000"
+    # NOTA: Porta removida para compatibilidade com EasyPanel
+    # O EasyPanel gerencia o proxy reverso automaticamente
     environment:
       # OpenAI
       - OPENAI_API_KEY=${OPENAI_API_KEY}
