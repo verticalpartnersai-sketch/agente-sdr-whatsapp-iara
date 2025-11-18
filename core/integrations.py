@@ -19,7 +19,8 @@ from typing import List, Dict, Optional, Any
 from pathlib import Path
 
 import httpx
-import pika
+import aio_pika
+from aio_pika import DeliveryMode, Message
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -1003,14 +1004,15 @@ class ElevenLabsClient:
 
 
 # ==============================================================================
-# RABBITMQ CLIENT
+# RABBITMQ CLIENT (aio-pika - ASYNC NATIVO)
 # ==============================================================================
 
 class RabbitMQClient:
     """
-    Cliente para RabbitMQ (fila de mensagens).
+    Cliente async para RabbitMQ (fila de mensagens).
 
-    Implementa pattern de Work Queue com confirmações.
+    Usa aio-pika para integração nativa com asyncio.
+    Reconexão automática built-in via connect_robust.
     """
 
     def __init__(
@@ -1021,7 +1023,7 @@ class RabbitMQClient:
         password: str = 'guest',
         queue_name: str = 'mensagens_whatsapp'
     ):
-        """Inicializa cliente RabbitMQ."""
+        """Inicializa cliente RabbitMQ (async)."""
         self.host = host
         self.port = port
         self.username = username
@@ -1029,97 +1031,94 @@ class RabbitMQClient:
         self.queue_name = queue_name
         self.connection = None
         self.channel = None
+        self.queue = None
+        self._amqp_url = f"amqp://{username}:{password}@{host}:{port}/"
 
-        self._connect()
+    async def connect(self):
+        """
+        Estabelece conexão robusta com RabbitMQ.
 
-    def _connect(self):
-        """Estabelece conexão com RabbitMQ."""
-        credentials = pika.PlainCredentials(self.username, self.password)
-        parameters = pika.ConnectionParameters(
-            host=self.host,
-            port=self.port,
-            credentials=credentials
-        )
+        Usa connect_robust para reconexão automática.
+        """
+        import aio_pika
+        from aio_pika import DeliveryMode
 
-        self.connection = pika.BlockingConnection(parameters)
-        self.channel = self.connection.channel()
+        # Conexão robusta com reconexão automática
+        self.connection = await aio_pika.connect_robust(self._amqp_url)
 
-        # Declarar fila como Quorum (alta confiabilidade)
-        self.channel.queue_declare(
-            queue=self.queue_name,
+        # Criar canal
+        self.channel = await self.connection.channel()
+
+        # QoS: Max 10 mensagens simultâneas
+        await self.channel.set_qos(prefetch_count=10)
+
+        # Declarar fila como durable com Quorum Queue
+        self.queue = await self.channel.declare_queue(
+            self.queue_name,
             durable=True,  # Sobrevive a reinicialização
             arguments={
-                'x-queue-type': 'quorum'  # Tipo Quorum: replicação e alta disponibilidade
+                'x-queue-type': 'quorum'  # Alta disponibilidade
             }
         )
 
-        logger.info(f"RabbitMQ conectado na fila '{self.queue_name}'")
+        logger.info(f"RabbitMQ conectado (async) na fila '{self.queue_name}'")
 
-    def publish(self, message: Dict):
+    async def publish(self, message: Dict):
         """
-        Publica mensagem na fila.
+        Publica mensagem na fila (async).
 
         Args:
             message: Dicionário com dados da mensagem
         """
-        self.channel.basic_publish(
-            exchange='',
-            routing_key=self.queue_name,
-            body=json.dumps(message),
-            properties=pika.BasicProperties(
-                delivery_mode=2,  # Mensagem persistente
-            )
+        import aio_pika
+        from aio_pika import DeliveryMode, Message
+
+        # Criar mensagem persistente
+        msg = Message(
+            body=json.dumps(message).encode(),
+            delivery_mode=DeliveryMode.PERSISTENT  # Mensagem persistente
+        )
+
+        # Publicar na fila via default exchange
+        await self.channel.default_exchange.publish(
+            msg,
+            routing_key=self.queue_name
         )
 
         logger.info(f"Mensagem publicada na fila: {message.get('phone', 'N/A')}")
 
-    def consume(self, callback):
+    async def consume(self, callback):
         """
-        Consome mensagens da fila com reconexão automática.
+        Consome mensagens da fila (async).
 
         Args:
-            callback: Função callback(ch, method, properties, body)
+            callback: Função async callback(message_data: dict)
         """
-        while True:
-            try:
-                # Verificar se conexão está ativa
-                if not self.connection or self.connection.is_closed:
-                    logger.warning("Conexão RabbitMQ perdida. Reconectando...")
-                    self._connect()
+        logger.info("Aguardando mensagens (async)...")
 
-                self.channel.basic_qos(prefetch_count=10)  # Max 10 mensagens simultâneas
-                self.channel.basic_consume(
-                    queue=self.queue_name,
-                    on_message_callback=callback,
-                    auto_ack=False  # Confirmação manual
-                )
+        # Consumir mensagens usando iterator
+        async with self.queue.iterator() as queue_iter:
+            async for message in queue_iter:
+                try:
+                    # Decodificar mensagem
+                    data = json.loads(message.body.decode())
 
-                logger.info("Aguardando mensagens...")
-                self.channel.start_consuming()
+                    # Chamar callback (deve ser async)
+                    await callback(data)
 
-            except pika.exceptions.StreamLostError as e:
-                logger.error(f"Conexão RabbitMQ perdida: {e}")
-                logger.info("Reconectando em 5 segundos...")
-                import time
-                time.sleep(5)
-                continue
+                    # Confirmar processamento
+                    await message.ack()
 
-            except pika.exceptions.AMQPConnectionError as e:
-                logger.error(f"Erro de conexão RabbitMQ: {e}")
-                logger.info("Reconectando em 5 segundos...")
-                import time
-                time.sleep(5)
-                continue
+                except Exception as e:
+                    logger.error(f"Erro ao processar mensagem: {e}")
+                    # Rejeitar e recolocar na fila
+                    await message.nack(requeue=True)
 
-            except Exception as e:
-                logger.error(f"Erro inesperado no consumer RabbitMQ: {e}")
-                raise  # Re-raise para ser tratado pela thread
-
-    def close(self):
-        """Fecha conexão."""
+    async def close(self):
+        """Fecha conexão (async)."""
         if self.connection:
-            self.connection.close()
-            logger.info("RabbitMQ desconectado")
+            await self.connection.close()
+            logger.info("RabbitMQ desconectado (async)")
 
 
 # ==============================================================================

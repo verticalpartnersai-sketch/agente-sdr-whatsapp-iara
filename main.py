@@ -65,7 +65,6 @@ hybrid_retriever = None
 agente_sdr = None
 followup_manager = None
 followup_scheduler = None
-main_event_loop = None  # Event loop principal para uso em threads
 
 
 async def init_clients():
@@ -73,7 +72,7 @@ async def init_clients():
     global whatsapp_client, google_calendar_client, supabase_client
     global elevenlabs_client, rabbitmq_client, redis_client
     global memory_manager, message_buffer, session_state, hybrid_retriever
-    global agente_sdr, followup_manager, followup_scheduler, main_event_loop
+    global agente_sdr, followup_manager, followup_scheduler
 
     logger.info("Inicializando clientes...")
 
@@ -107,7 +106,7 @@ async def init_clients():
         voice_id=settings.ELEVENLABS_VOICE_ID
     )
 
-    # RabbitMQ
+    # RabbitMQ (async)
     rabbitmq_client = RabbitMQClient(
         host=settings.RABBITMQ_HOST,
         port=settings.RABBITMQ_PORT,
@@ -115,6 +114,7 @@ async def init_clients():
         password=settings.RABBITMQ_PASSWORD,
         queue_name=settings.RABBITMQ_QUEUE
     )
+    await rabbitmq_client.connect()  # Conexão async
 
     # Redis
     redis_client = redis.Redis(
@@ -198,7 +198,7 @@ async def cleanup():
 
     if rabbitmq_client:
         try:
-            rabbitmq_client.close()
+            await rabbitmq_client.close()
         except Exception as e:
             logger.warning(f"Erro ao fechar RabbitMQ (ignorado): {e}")
 
@@ -215,42 +215,28 @@ async def cleanup():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Gerencia lifecycle da aplicação."""
-    global main_event_loop
-
-    # Guardar event loop principal
-    main_event_loop = asyncio.get_running_loop()
-
     # Startup
     await init_clients()
 
-    # Iniciar RabbitMQ consumer em thread separada com retry
-    import threading
-    import time
-
-    def start_consumer():
-        """Inicia consumer com retry automático em caso de falha."""
-        max_retries = 5
-        retry_delay = 5  # segundos
-
-        for attempt in range(max_retries):
-            try:
-                if rabbitmq_client:
-                    logger.info(f"Iniciando RabbitMQ consumer (tentativa {attempt + 1}/{max_retries})...")
-                    rabbitmq_client.consume(message_consumer_callback)
-                break  # Se chegou aqui, consumiu com sucesso
-            except Exception as e:
-                logger.error(f"Erro no consumer RabbitMQ (tentativa {attempt + 1}/{max_retries}): {e}")
-                if attempt < max_retries - 1:
-                    logger.info(f"Reconectando em {retry_delay} segundos...")
-                    time.sleep(retry_delay)
-                else:
-                    logger.error("Máximo de tentativas atingido. Consumer RabbitMQ não iniciado.")
-
-    consumer_thread = threading.Thread(target=start_consumer, daemon=True)
-    consumer_thread.start()
+    # Iniciar RabbitMQ consumer (async task em background)
+    consumer_task = None
+    if rabbitmq_client:
+        logger.info("Iniciando RabbitMQ consumer (async)...")
+        consumer_task = asyncio.create_task(
+            rabbitmq_client.consume(message_consumer_callback)
+        )
 
     yield
+
     # Shutdown
+    if consumer_task and not consumer_task.done():
+        logger.info("Cancelando consumer RabbitMQ...")
+        consumer_task.cancel()
+        try:
+            await consumer_task
+        except asyncio.CancelledError:
+            logger.info("Consumer RabbitMQ cancelado com sucesso")
+
     await cleanup()
 
 
@@ -491,16 +477,16 @@ async def process_buffered_messages(
         logger.error(f"Erro ao processar mensagens de {phone}: {e}")
 
 
-def message_consumer_callback(ch, method, properties, body):
+async def message_consumer_callback(data: dict):
     """
-    Callback do RabbitMQ consumer.
+    Callback async do RabbitMQ consumer.
 
-    Processa mensagens da fila (síncrono, executa em thread separada).
+    Processa mensagens da fila (async nativo).
+
+    Args:
+        data: Dicionário com dados completos da mensagem
     """
-    import json
-
     try:
-        data = json.loads(body)
         message_data = data.get("data", {})
 
         # Extrair informações
@@ -508,12 +494,9 @@ def message_consumer_callback(ch, method, properties, body):
         message_id = message_data.get("id")
         message_type = message_data.get("type")
 
-        # Marcar como lida (agendar no event loop principal)
-        if main_event_loop and whatsapp_client:
-            asyncio.run_coroutine_threadsafe(
-                whatsapp_client.mark_as_read(message_id),
-                main_event_loop
-            )
+        # Marcar como lida (async direto)
+        if whatsapp_client:
+            await whatsapp_client.mark_as_read(message_id)
 
         # Processar baseado no tipo
         if message_type == "text":
@@ -529,29 +512,22 @@ def message_consumer_callback(ch, method, properties, body):
             media_type = message_type
 
         else:
-            # Tipo não suportado
-            ch.basic_ack(delivery_tag=method.delivery_tag)
+            # Tipo não suportado - callback aio-pika já faz ack/nack
             return
 
-        # Adicionar ao buffer (agendar no event loop principal)
-        if main_event_loop and message_buffer:
-            asyncio.run_coroutine_threadsafe(
-                message_buffer.add_message(phone, {
-                    "message_id": message_id,
-                    "content": content,
-                    "timestamp": message_data.get("timestamp"),
-                    "media_url": media_url,
-                    "media_type": media_type
-                }),
-                main_event_loop
-            )
-
-        # Confirmar processamento
-        ch.basic_ack(delivery_tag=method.delivery_tag)
+        # Adicionar ao buffer (async direto)
+        if message_buffer:
+            await message_buffer.add_message(phone, {
+                "message_id": message_id,
+                "content": content,
+                "timestamp": message_data.get("timestamp"),
+                "media_url": media_url,
+                "media_type": media_type
+            })
 
     except Exception as e:
         logger.error(f"Erro no consumer: {e}")
-        ch.basic_nack(delivery_tag=method.delivery_tag)
+        raise  # Re-raise para aio-pika fazer nack
 
 
 # ==============================================================================
