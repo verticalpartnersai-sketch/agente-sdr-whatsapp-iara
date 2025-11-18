@@ -232,14 +232,14 @@ class AgenteSDR:
         tools = [
             # === WHATSAPP TOOLS ===
             StructuredTool.from_function(
-                func=self._tool_enviar_mensagem,
+                coroutine=self._tool_enviar_mensagem,
                 name="enviar_mensagem",
                 description="Envia mensagem de texto fragmentada para o lead via WhatsApp",
                 args_schema=EnviarMensagemInput
             ),
 
             StructuredTool.from_function(
-                func=self._tool_enviar_audio,
+                coroutine=self._tool_enviar_audio,
                 name="enviar_audio",
                 description="Converte texto em áudio via ElevenLabs e envia para o lead",
                 args_schema=EnviarAudioInput
@@ -247,28 +247,28 @@ class AgenteSDR:
 
             # === GOOGLE CALENDAR TOOLS ===
             StructuredTool.from_function(
-                func=self._tool_consulta_horarios,
+                coroutine=self._tool_consulta_horarios,
                 name="consulta_horarios",
                 description="Busca horários disponíveis no Google Calendar",
                 args_schema=ConsultaHorariosInput
             ),
 
             StructuredTool.from_function(
-                func=self._tool_agenda_reuniao,
+                coroutine=self._tool_agenda_reuniao,
                 name="agenda_reuniao",
                 description="Agenda nova reunião no Google Calendar com Google Meet",
                 args_schema=AgendaReuniaoInput
             ),
 
             StructuredTool.from_function(
-                func=self._tool_cancela_reuniao,
+                coroutine=self._tool_cancela_reuniao,
                 name="cancela_reuniao",
                 description="Cancela reunião existente no Google Calendar",
                 args_schema=CancelaReuniaoInput
             ),
 
             StructuredTool.from_function(
-                func=self._tool_reagenda_reuniao,
+                coroutine=self._tool_reagenda_reuniao,
                 name="reagenda_reuniao",
                 description="Reagenda reunião para nova data/hora",
                 args_schema=ReagendaReuniaoInput
@@ -276,7 +276,7 @@ class AgenteSDR:
 
             # === SUPABASE TOOLS ===
             StructuredTool.from_function(
-                func=self._tool_atualizar_tag,
+                coroutine=self._tool_atualizar_tag,
                 name="atualizar_tag",
                 description="Adiciona tag ao lead (ex: 'reuniao_agendada', 'nao_interessado')",
                 args_schema=AtualizaTagInput
@@ -284,7 +284,7 @@ class AgenteSDR:
 
             # === KNOWLEDGE BASE TOOL ===
             StructuredTool.from_function(
-                func=self._tool_buscar_conhecimento,
+                coroutine=self._tool_buscar_conhecimento,
                 name="buscar_conhecimento",
                 description="Busca informações relevantes na base de conhecimento via RAG híbrido",
                 args_schema=BuscarConhecimentoInput
@@ -292,14 +292,14 @@ class AgenteSDR:
 
             # === MEDIA ANALYSIS TOOLS ===
             StructuredTool.from_function(
-                func=self._tool_analisar_imagem,
+                coroutine=self._tool_analisar_imagem,
                 name="analisar_imagem",
                 description="Analisa imagem enviada pelo lead usando visão computacional",
                 args_schema=AnalisarImagemInput
             ),
 
             StructuredTool.from_function(
-                func=self._tool_transcrever_audio,
+                coroutine=self._tool_transcrever_audio,
                 name="transcrever_audio",
                 description="Transcreve áudio enviado pelo lead para texto",
                 args_schema=TranscreverAudioInput
