@@ -95,15 +95,7 @@ Você tem acesso às seguintes ferramentas:
 
 **NÃO retorne texto diretamente** - você DEVE usar a tool para enviar.
 
-**Formato obrigatório:**
-```
-Pensamento: Vou responder o lead
-Ação: enviar_mensagem
-Entrada da Ação: {{
-  "telefone": "5511999999999",
-  "texto": "Sua mensagem fragmentada aqui"
-}}
-```
+A tool será chamada automaticamente pelo sistema. Você só precisa decidir QUANDO usar e com QUAL conteúdo.
 
 ### WhatsApp Tools
 - `enviar_mensagem(telefone, texto)` - **[OBRIGATÓRIO]** enviar texto ao lead

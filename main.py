@@ -474,20 +474,54 @@ async def process_buffered_messages(
                 f"Ativando fallback para {phone}"
             )
 
-            # Importar MessageFormatter
-            from core.agent import MessageFormatter
+            # VALIDAÇÃO: Não enviar se resposta for JSON/código/formato ReAct
+            is_safe_to_send = True
 
-            # Enviar resposta manualmente
-            await MessageFormatter.enviar_fragmentado(
-                whatsapp_client=whatsapp_client,
-                telefone=phone,
-                texto=response
-            )
+            # Verificar se contém padrões problemáticos
+            problematic_patterns = [
+                "Pensamento:",
+                "Ação:",
+                "Entrada da Ação:",
+                '"telefone":',
+                '"texto":',
+                'Invoking:',
+                '```json',
+                '```python'
+            ]
 
-            # Salvar na memória
-            await memory_manager.add_message(phone, "ai", response)
+            for pattern in problematic_patterns:
+                if pattern in response:
+                    logger.error(
+                        f"🚨 RESPOSTA PERIGOSA BLOQUEADA para {phone}: "
+                        f"contém '{pattern}'"
+                    )
+                    is_safe_to_send = False
+                    break
 
-            logger.info(f"✅ Resposta enviada via fallback para {phone}")
+            # Se começar com { ou contiver apenas JSON
+            if response.strip().startswith("{") or response.strip().startswith("["):
+                logger.error(f"🚨 RESPOSTA PERIGOSA BLOQUEADA para {phone}: JSON bruto")
+                is_safe_to_send = False
+
+            if is_safe_to_send and len(response.strip()) > 5:
+                # Importar MessageFormatter
+                from core.agent import MessageFormatter
+
+                # Enviar resposta manualmente
+                await MessageFormatter.enviar_fragmentado(
+                    whatsapp_client=whatsapp_client,
+                    telefone=phone,
+                    texto=response
+                )
+
+                # Salvar na memória
+                await memory_manager.add_message(phone, "ai", response)
+
+                logger.info(f"✅ Resposta enviada via fallback para {phone}")
+            else:
+                logger.error(
+                    f"🚨 Resposta não enviada (bloqueada por segurança) para {phone}"
+                )
         else:
             logger.info(f"✅ Resposta enviada via tool para {phone}")
 

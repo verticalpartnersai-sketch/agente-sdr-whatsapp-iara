@@ -598,10 +598,45 @@ class AgenteSDR:
             tools=self.tools,
             verbose=True,
             handle_parsing_errors=True,
-            max_iterations=10
+            max_iterations=10,
+            return_intermediate_steps=False,  # Não retornar steps internos
+            early_stopping_method="generate"  # Parar após gerar resposta
         )
 
         return agent_executor
+
+    def _sanitize_response(self, response: str) -> str:
+        """
+        Remove JSON e formato ReAct da resposta caso tenha vazado.
+
+        Args:
+            response: Resposta bruta do agente
+
+        Returns:
+            Resposta limpa e segura
+        """
+        # Se resposta contém formato ReAct, extrair apenas o pensamento
+        if "Pensamento:" in response or "Ação:" in response:
+            logger.warning("⚠️ Formato ReAct detectado na resposta - sanitizando")
+
+            # Tentar extrair apenas texto útil antes de "Ação:"
+            if "Pensamento:" in response:
+                parts = response.split("Ação:")
+                if len(parts) > 0:
+                    thought = parts[0].replace("Pensamento:", "").strip()
+                    # Se o pensamento for útil, retornar
+                    if len(thought) > 10 and not thought.startswith("{"):
+                        return thought
+
+            # Fallback: retornar mensagem genérica
+            return "Desculpe, tive um problema ao processar sua mensagem. Pode reformular?"
+
+        # Se resposta contém JSON bruto, tentar extrair o texto
+        if response.strip().startswith("{") or "```" in response:
+            logger.warning("⚠️ JSON/código detectado na resposta - sanitizando")
+            return "Desculpe, tive um problema ao processar sua mensagem. Pode reformular?"
+
+        return response
 
     async def process_message(
         self,
@@ -631,8 +666,8 @@ class AgenteSDR:
             input_with_context = (
                 f"[TELEFONE DO LEAD: {phone}]\n\n"
                 f"Mensagem do lead: {message}\n\n"
-                f"IMPORTANTE: Use a tool 'enviar_mensagem(telefone=\"{phone}\", texto=\"sua resposta\")' "
-                f"para enviar sua resposta ao lead."
+                f"IMPORTANTE: Use APENAS a tool 'enviar_mensagem' com telefone={phone} para responder. "
+                f"NÃO retorne texto diretamente."
             )
 
             result = await self.agent.ainvoke({
@@ -641,6 +676,9 @@ class AgenteSDR:
             })
 
             response = result["output"]
+
+            # CAMADA DE SEGURANÇA: Sanitizar resposta
+            response = self._sanitize_response(response)
 
             logger.info(f"Agente processou mensagem de {phone}")
             return response
