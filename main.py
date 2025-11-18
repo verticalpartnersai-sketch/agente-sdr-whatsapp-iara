@@ -466,7 +466,30 @@ async def process_buffered_messages(
             metadata={"buffered_messages": original_messages}
         )
 
-        logger.info(f"Resposta enviada para {phone}")
+        # CAMADA DE SEGURANÇA: Se agente não usou a tool, enviar manualmente
+        # (fallback para garantir que mensagem SEMPRE seja enviada)
+        if response and not response.startswith("Mensagem enviada com sucesso"):
+            logger.warning(
+                f"⚠️ Agente não usou tool enviar_mensagem - "
+                f"Ativando fallback para {phone}"
+            )
+
+            # Importar MessageFormatter
+            from core.agent import MessageFormatter
+
+            # Enviar resposta manualmente
+            await MessageFormatter.enviar_fragmentado(
+                whatsapp_client=whatsapp_client,
+                telefone=phone,
+                texto=response
+            )
+
+            # Salvar na memória
+            await memory_manager.add_message(phone, "ai", response)
+
+            logger.info(f"✅ Resposta enviada via fallback para {phone}")
+        else:
+            logger.info(f"✅ Resposta enviada via tool para {phone}")
 
         # Agendar primeiro follow-up (se ainda não tiver)
         lead = await supabase_client.get_lead(phone)

@@ -627,9 +627,16 @@ class AgenteSDR:
             # Recuperar histórico
             chat_history = await self.memory.get_history_formatted(phone, limit=20)
 
-            # Executar agente
+            # Executar agente COM telefone no contexto
+            input_with_context = (
+                f"[TELEFONE DO LEAD: {phone}]\n\n"
+                f"Mensagem do lead: {message}\n\n"
+                f"IMPORTANTE: Use a tool 'enviar_mensagem(telefone=\"{phone}\", texto=\"sua resposta\")' "
+                f"para enviar sua resposta ao lead."
+            )
+
             result = await self.agent.ainvoke({
-                "input": message,
+                "input": input_with_context,
                 "chat_history": chat_history
             })
 
