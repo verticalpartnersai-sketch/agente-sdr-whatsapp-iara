@@ -599,8 +599,7 @@ class AgenteSDR:
             verbose=True,
             handle_parsing_errors=True,
             max_iterations=10,
-            return_intermediate_steps=False,  # Não retornar steps internos
-            early_stopping_method="generate"  # Parar após gerar resposta
+            return_intermediate_steps=False  # Não retornar steps internos
         )
 
         return agent_executor

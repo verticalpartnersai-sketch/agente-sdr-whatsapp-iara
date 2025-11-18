@@ -468,7 +468,15 @@ async def process_buffered_messages(
 
         # CAMADA DE SEGURANÇA: Se agente não usou a tool, enviar manualmente
         # (fallback para garantir que mensagem SEMPRE seja enviada)
-        if response and not response.startswith("Mensagem enviada com sucesso"):
+        # Também ignora se resposta for vazia ou apenas confirmação genérica
+        should_use_fallback = (
+            response and
+            not response.startswith("Mensagem enviada com sucesso") and
+            response.strip() != "" and
+            not response.startswith("Mensagem enviada!")  # Ignorar confirmações genéricas
+        )
+
+        if should_use_fallback:
             logger.warning(
                 f"⚠️ Agente não usou tool enviar_mensagem - "
                 f"Ativando fallback para {phone}"
