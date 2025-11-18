@@ -304,7 +304,7 @@ async def whatsapp_webhook_receive(request: Request):
                 if "messages" in value:
                     for message in value["messages"]:
                         # Publicar no RabbitMQ para processamento assíncrono
-                        rabbitmq_client.publish({
+                        await rabbitmq_client.publish({
                             "type": "message",
                             "data": message
                         })
