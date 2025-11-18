@@ -99,10 +99,10 @@ Você tem acesso às seguintes ferramentas:
 ```
 Pensamento: Vou responder o lead
 Ação: enviar_mensagem
-Entrada da Ação: {
+Entrada da Ação: {{
   "telefone": "5511999999999",
   "texto": "Sua mensagem fragmentada aqui"
-}
+}}
 ```
 
 ### WhatsApp Tools
