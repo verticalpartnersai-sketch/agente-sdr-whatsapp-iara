@@ -1075,20 +1075,45 @@ class RabbitMQClient:
 
     def consume(self, callback):
         """
-        Consome mensagens da fila.
+        Consome mensagens da fila com reconexão automática.
 
         Args:
             callback: Função callback(ch, method, properties, body)
         """
-        self.channel.basic_qos(prefetch_count=10)  # Max 10 mensagens simultâneas
-        self.channel.basic_consume(
-            queue=self.queue_name,
-            on_message_callback=callback,
-            auto_ack=False  # Confirmação manual
-        )
+        while True:
+            try:
+                # Verificar se conexão está ativa
+                if not self.connection or self.connection.is_closed:
+                    logger.warning("Conexão RabbitMQ perdida. Reconectando...")
+                    self._connect()
 
-        logger.info("Aguardando mensagens...")
-        self.channel.start_consuming()
+                self.channel.basic_qos(prefetch_count=10)  # Max 10 mensagens simultâneas
+                self.channel.basic_consume(
+                    queue=self.queue_name,
+                    on_message_callback=callback,
+                    auto_ack=False  # Confirmação manual
+                )
+
+                logger.info("Aguardando mensagens...")
+                self.channel.start_consuming()
+
+            except pika.exceptions.StreamLostError as e:
+                logger.error(f"Conexão RabbitMQ perdida: {e}")
+                logger.info("Reconectando em 5 segundos...")
+                import time
+                time.sleep(5)
+                continue
+
+            except pika.exceptions.AMQPConnectionError as e:
+                logger.error(f"Erro de conexão RabbitMQ: {e}")
+                logger.info("Reconectando em 5 segundos...")
+                import time
+                time.sleep(5)
+                continue
+
+            except Exception as e:
+                logger.error(f"Erro inesperado no consumer RabbitMQ: {e}")
+                raise  # Re-raise para ser tratado pela thread
 
     def close(self):
         """Fecha conexão."""

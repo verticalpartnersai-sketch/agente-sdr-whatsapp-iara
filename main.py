@@ -217,12 +217,28 @@ async def lifespan(app: FastAPI):
     # Startup
     await init_clients()
 
-    # Iniciar RabbitMQ consumer em thread separada
+    # Iniciar RabbitMQ consumer em thread separada com retry
     import threading
+    import time
 
     def start_consumer():
-        if rabbitmq_client:
-            rabbitmq_client.consume(message_consumer_callback)
+        """Inicia consumer com retry automático em caso de falha."""
+        max_retries = 5
+        retry_delay = 5  # segundos
+
+        for attempt in range(max_retries):
+            try:
+                if rabbitmq_client:
+                    logger.info(f"Iniciando RabbitMQ consumer (tentativa {attempt + 1}/{max_retries})...")
+                    rabbitmq_client.consume(message_consumer_callback)
+                break  # Se chegou aqui, consumiu com sucesso
+            except Exception as e:
+                logger.error(f"Erro no consumer RabbitMQ (tentativa {attempt + 1}/{max_retries}): {e}")
+                if attempt < max_retries - 1:
+                    logger.info(f"Reconectando em {retry_delay} segundos...")
+                    time.sleep(retry_delay)
+                else:
+                    logger.error("Máximo de tentativas atingido. Consumer RabbitMQ não iniciado.")
 
     consumer_thread = threading.Thread(target=start_consumer, daemon=True)
     consumer_thread.start()
