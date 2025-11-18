@@ -65,6 +65,7 @@ hybrid_retriever = None
 agente_sdr = None
 followup_manager = None
 followup_scheduler = None
+main_event_loop = None  # Event loop principal para uso em threads
 
 
 async def init_clients():
@@ -72,7 +73,7 @@ async def init_clients():
     global whatsapp_client, google_calendar_client, supabase_client
     global elevenlabs_client, rabbitmq_client, redis_client
     global memory_manager, message_buffer, session_state, hybrid_retriever
-    global agente_sdr, followup_manager, followup_scheduler
+    global agente_sdr, followup_manager, followup_scheduler, main_event_loop
 
     logger.info("Inicializando clientes...")
 
@@ -214,6 +215,11 @@ async def cleanup():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Gerencia lifecycle da aplicação."""
+    global main_event_loop
+
+    # Guardar event loop principal
+    main_event_loop = asyncio.get_running_loop()
+
     # Startup
     await init_clients()
 
@@ -489,7 +495,7 @@ def message_consumer_callback(ch, method, properties, body):
     """
     Callback do RabbitMQ consumer.
 
-    Processa mensagens da fila.
+    Processa mensagens da fila (síncrono, executa em thread separada).
     """
     import json
 
@@ -502,8 +508,12 @@ def message_consumer_callback(ch, method, properties, body):
         message_id = message_data.get("id")
         message_type = message_data.get("type")
 
-        # Marcar como lida
-        asyncio.create_task(whatsapp_client.mark_as_read(message_id))
+        # Marcar como lida (agendar no event loop principal)
+        if main_event_loop and whatsapp_client:
+            asyncio.run_coroutine_threadsafe(
+                whatsapp_client.mark_as_read(message_id),
+                main_event_loop
+            )
 
         # Processar baseado no tipo
         if message_type == "text":
@@ -523,14 +533,18 @@ def message_consumer_callback(ch, method, properties, body):
             ch.basic_ack(delivery_tag=method.delivery_tag)
             return
 
-        # Adicionar ao buffer
-        asyncio.create_task(message_buffer.add_message(phone, {
-            "message_id": message_id,
-            "content": content,
-            "timestamp": message_data.get("timestamp"),
-            "media_url": media_url,
-            "media_type": media_type
-        }))
+        # Adicionar ao buffer (agendar no event loop principal)
+        if main_event_loop and message_buffer:
+            asyncio.run_coroutine_threadsafe(
+                message_buffer.add_message(phone, {
+                    "message_id": message_id,
+                    "content": content,
+                    "timestamp": message_data.get("timestamp"),
+                    "media_url": media_url,
+                    "media_type": media_type
+                }),
+                main_event_loop
+            )
 
         # Confirmar processamento
         ch.basic_ack(delivery_tag=method.delivery_tag)
