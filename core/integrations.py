@@ -234,15 +234,14 @@ class WhatsAppClient:
         # Retry logic simples (3 tentativas)
         for attempt in range(3):
             try:
-                async with self.client as client:
-                    response = await client.request(
-                        method,
-                        url,
-                        headers=headers,
-                        **kwargs
-                    )
-                    response.raise_for_status()
-                    return response.json()
+                response = await self.client.request(
+                    method,
+                    url,
+                    headers=headers,
+                    **kwargs
+                )
+                response.raise_for_status()
+                return response.json()
             except httpx.HTTPError as e:
                 if attempt == 2:  # última tentativa
                     raise
