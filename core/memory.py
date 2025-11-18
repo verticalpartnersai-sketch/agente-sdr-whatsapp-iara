@@ -149,16 +149,27 @@ class RedisMemoryManager:
 
         return formatted
 
-    async def clear_history(self, phone: str):
+    async def clear_history(self, phone: str) -> bool:
         """
-        Limpa histórico de um telefone.
+        Limpa completamente o histórico de conversação.
 
         Args:
             phone: Número de telefone
+
+        Returns:
+            True se limpou com sucesso
         """
         key = f"chat_history:{phone}"
-        await self.redis.delete(key)
-        logger.info(f"Histórico de {phone} limpo")
+
+        # Deletar chave do Redis
+        deleted = await self.redis.delete(key)
+
+        if deleted:
+            logger.info(f"✅ Histórico limpo para {phone}")
+            return True
+        else:
+            logger.warning(f"⚠️ Nenhum histórico encontrado para {phone}")
+            return False
 
     async def get_conversation_summary(self, phone: str) -> str:
         """

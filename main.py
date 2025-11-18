@@ -459,7 +459,29 @@ async def process_buffered_messages(
     try:
         logger.info(f"Processando mensagens buffered de {phone}")
 
-        # Processar com agente
+        # COMANDO ESPECIAL: #Clear - Limpar histórico
+        if combined_content.strip().lower() in ["#clear", "#limpar"]:
+            logger.info(f"🧹 Comando #Clear recebido de {phone}")
+
+            # Limpar histórico no Redis
+            cleared = await memory_manager.clear_history(phone)
+
+            if cleared:
+                # Enviar confirmação
+                await whatsapp_client.send_text(
+                    phone,
+                    "✅ Histórico de conversas limpo com sucesso! Podemos começar do zero."
+                )
+                logger.info(f"✅ Histórico limpo e confirmação enviada para {phone}")
+            else:
+                await whatsapp_client.send_text(
+                    phone,
+                    "ℹ️ Nenhum histórico encontrado para limpar."
+                )
+
+            return  # Não processar com o agente
+
+        # Processar com agente normalmente
         response = await agente_sdr.process_message(
             phone=phone,
             message=combined_content,
